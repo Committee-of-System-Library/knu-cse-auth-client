@@ -1,4 +1,28 @@
+import { useState } from 'react'
+
+const translations = {
+    ko: {
+        welcome: '경북대학교 컴퓨터학부 통합인증시스템 방문을 환영합니다.',
+        googleLogin: 'Google 계정으로 로그인',
+        notice: '경북대학교 Google Workspace 계정(@knu.ac.kr)만 로그인 가능합니다.',
+        terms: '이용 약관',
+        privacy: '개인정보처리방침',
+        emailPolicy: '이메일무단수집거부',
+    },
+    en: {
+        welcome: 'Welcome to KNU CSE Integrated Authentication System.',
+        googleLogin: 'Sign in with Google',
+        notice: 'Only Kyungpook National University Google Workspace accounts (@knu.ac.kr) can sign in.',
+        terms: 'Terms of Service',
+        privacy: 'Privacy Policy',
+        emailPolicy: 'Email Collection Refusal',
+    },
+}
+
 export default function LoginCardSection() {
+    const [language, setLanguage] = useState<'ko' | 'en'>('ko')
+    const t = translations[language]
+
     return (
         <div className="w-[55%] bg-white rounded-2xl shadow-md p-10 flex flex-col justify-between">
             {/* 상단 영역 */}
@@ -6,10 +30,22 @@ export default function LoginCardSection() {
                 {/* 언어 선택 (우측 상단) */}
                 <div className="flex justify-end mb-6">
                     <div className="flex gap-2 bg-gray-100 rounded-lg p-1">
-                        <button className="px-4 py-2 rounded-md bg-white text-gray-900 font-medium text-sm">
+                        <button
+                            onClick={() => setLanguage('ko')}
+                            className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${language === 'ko'
+                                ? 'bg-white text-gray-900'
+                                : 'text-gray-600 hover:bg-white'
+                                }`}
+                        >
                             한국어
                         </button>
-                        <button className="px-4 py-2 rounded-md text-gray-600 font-medium text-sm hover:bg-white transition-colors">
+                        <button
+                            onClick={() => setLanguage('en')}
+                            className={`px-4 py-2 rounded-md font-medium text-sm transition-colors ${language === 'en'
+                                ? 'bg-white text-gray-900'
+                                : 'text-gray-600 hover:bg-white'
+                                }`}
+                        >
                             English
                         </button>
                     </div>
@@ -18,7 +54,7 @@ export default function LoginCardSection() {
                 <div className="mb-4 flex items-center gap-4 justify-center">
                     <h2 className="text-primary text-2xl font-bold whitespace-nowrap">LOGIN</h2>
                     <p className="text-gray-900 text-xl leading-relaxed">
-                        경북대학교 컴퓨터학부 통합 인증 시스템 방문을 환영합니다.
+                        {t.welcome}
                     </p>
                 </div>
             </div>
@@ -30,21 +66,21 @@ export default function LoginCardSection() {
                     <div className="w-12 h-12 flex items-center justify-center">
                         <img src="/Googlelogo.svg" alt="Google" className="w-full h-full" />
                     </div>
-                    <span className="text-gray-900 font-medium text-base">Google 계정으로 로그인</span>
+                    <span className="text-gray-900 font-medium text-base">{t.googleLogin}</span>
                 </button>
             </div>
 
             {/* 하단: 안내 문구와 정책 링크 */}
             <div className="text-center mt-10">
                 <p className="text-xs text-gray-600 mb-2">
-                    경북대학교 Google Workspace 계정(@knu.ac.kr)만 로그인 가능합니다.
+                    {t.notice}
                 </p>
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
-                    <a href="#" className="hover:text-primary transition-colors">이용 약관</a>
+                    <a href="#" className="hover:text-primary transition-colors">{t.terms}</a>
                     <span className="text-gray-400">|</span>
-                    <a href="#" className="hover:text-primary transition-colors">개인정보처리방침</a>
+                    <a href="#" className="hover:text-primary transition-colors">{t.privacy}</a>
                     <span className="text-gray-400">|</span>
-                    <a href="#" className="hover:text-primary transition-colors">이메일무단수집거부</a>
+                    <a href="#" className="hover:text-primary transition-colors">{t.emailPolicy}</a>
                 </div>
             </div>
         </div>
