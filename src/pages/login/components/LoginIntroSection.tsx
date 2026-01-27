@@ -1,16 +1,24 @@
 export default function LoginIntroSection() {
     return (
-        <div className="flex w-[40%] bg-left-bg flex-col justify-between p-12">
+        <div className="flex w-[45%] bg-left-bg flex-col justify-between p-4">
             <div className="flex flex-col items-center justify-center flex-1">
-                <h1 className="text-primary text-3xl font-bold leading-tight text-center">
-                    경북대학교<br />IT대학 컴퓨터학부 학생회
-                </h1>
-                <div className="space-y-3 w-[50%] mt-24">
-                    <a href="https://cse.knu.ac.kr/index.php" target="_blank" rel="noopener noreferrer" className="bg-button-gray/10 border border-[1.5px] border-button-gray hover:bg-primary/10 hover:border-primary/80 text-gray-900 px-6 py-2.5 rounded-md w-full text-center transition-colors font-medium block">
+                <div className="flex items-center gap-4 mb-8">
+                    <img src="/cse_logo.svg" alt="CSE Logo" className="w-16 h-16" />
+                    <div className="flex flex-col">
+                        <h1 className="text-primary text-3xl font-bold leading-tight">
+                            경북대학교
+                        </h1>
+                        <h1 className="text-primary text-3xl font-bold leading-tight">
+                            IT대학 컴퓨터학부 학생회
+                        </h1>
+                    </div>
+                </div>
+                <div className="space-y-3 w-[50%] mt-8">
+                    <a href="https://cse.knu.ac.kr/index.php" target="_blank" rel="noopener noreferrer" className="bg-button-gray/10 border border-[1.5px] border-button-gray/80 hover:bg-primary/10 hover:border-primary/80 text-gray-900 px-6 py-2.5 rounded-md w-full text-center transition-colors font-medium block">
                         컴퓨터학부 홈페이지
                     </a>
-                    <a href="https://cse.knu.ac.kr/index.php" target="_blank" rel="noopener noreferrer" className="bg-button-gray/10 border border-[1.5px] border-button-gray hover:bg-primary/10 hover:border-primary/80 text-gray-900 px-6 py-2.5 rounded-md w-full text-center transition-colors font-medium block">
-                        컴퓨터학부 홈페이지
+                    <a href="https://www.knu.ac.kr/wbbs/wbbs/main/main.action" target="_blank" rel="noopener noreferrer" className="bg-button-gray/10 border border-[1.5px] border-button-gray/80 hover:bg-primary/10 hover:border-primary/80 text-gray-900 px-6 py-2.5 rounded-md w-full text-center transition-colors font-medium block">
+                        경북대학교 홈페이지
                     </a>
                 </div>
             </div>
