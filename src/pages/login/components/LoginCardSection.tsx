@@ -3,16 +3,20 @@ import { useState } from 'react'
 const translations = {
     ko: {
         welcome: '경북대학교 컴퓨터학부 통합인증시스템 방문을 환영합니다.',
+        welcomeMobile: '경북대학교 컴퓨터학부 통합인증시스템\n방문을 환영합니다.',
         googleLogin: 'Google 계정으로 로그인',
         notice: '경북대학교 Google Workspace 계정(@knu.ac.kr)만 로그인 가능합니다.',
+        noticeMobile: '경북대학교 Google Workspace 계정(@knu.ac.kr)만\n 로그인 가능합니다.',
         terms: '이용 약관',
         privacy: '개인정보처리방침',
         emailPolicy: '이메일무단수집거부',
     },
     en: {
         welcome: 'Welcome to KNU CSE Integrated Authentication System.',
+        welcomeMobile: 'Welcome to KNU CSE Integrated Authentication System.',
         googleLogin: 'Sign in with Google',
         notice: 'Only Kyungpook National University Google Workspace accounts (@knu.ac.kr) can sign in.',
+        noticeMobile: 'Only Kyungpook National University Google Workspace accounts (@knu.ac.kr) can sign in.',
         terms: 'Terms of Service',
         privacy: 'Privacy Policy',
         emailPolicy: 'Email Collection Refusal',
@@ -53,27 +57,41 @@ export default function LoginCardSection() {
                 {/* LOGIN 타이틀과 환영 문구 */}
                 <div className="mb-4 flex items-center gap-4 justify-center">
                     <h2 className="text-primary text-lg lg:text-2xl font-bold whitespace-nowrap">LOGIN</h2>
-                    <p className="text-gray-900 text-sm lg:text-xl leading-relaxed">
-                        {t.welcome}
+                    <p className="text-gray-900 text-sm lg:text-xl leading-relaxed whitespace-pre-line lg:whitespace-normal">
+                        {language === 'ko' ? (
+                            <>
+                                <span className="lg:hidden">{t.welcomeMobile}</span>
+                                <span className="hidden lg:inline">{t.welcome}</span>
+                            </>
+                        ) : (
+                            t.welcome
+                        )}
                     </p>
                 </div>
             </div>
 
             {/* Google 로그인 버튼 - 세로 중앙 */}
-            <div className="flex-1 flex items-center justify-center py-4 min-h-0">
-                <button className="w-[80%] bg-white border border-[1.5px] border-button-gray/80 rounded-lg px-6 py-6 flex flex-col items-center justify-center gap-3 hover:border-gray-400 transition-colors">
+            <div className="flex-1 flex items-center justify-center my-16 lg:my-4 min-h-0">
+                <button className="w-[80%] bg-white border border-[1.5px] border-button-gray/80 rounded-lg px-4 py-4 lg:px-6 lg:py-6 flex flex-col items-center justify-center gap-2 lg:gap-3 hover:border-gray-400 transition-colors">
                     {/* Google G 로고 */}
-                    <div className="w-12 h-12 flex items-center justify-center">
+                    <div className="w-8 h-8 lg:w-12 lg:h-12 flex items-center justify-center">
                         <img src="/Googlelogo.svg" alt="Google" className="w-full h-full" />
                     </div>
-                    <span className="text-gray-900 font-medium text-base">{t.googleLogin}</span>
+                    <span className="text-gray-900 font-medium text-sm lg:text-base">{t.googleLogin}</span>
                 </button>
             </div>
 
             {/* 하단: 안내 문구와 정책 링크 */}
             <div className="text-center">
-                <p className="text-xs text-gray-600 mb-2">
-                    {t.notice}
+                <p className="text-xs text-gray-600 mb-2 whitespace-pre-line lg:whitespace-normal">
+                    {language === 'ko' ? (
+                        <>
+                            <span className="lg:hidden">{t.noticeMobile}</span>
+                            <span className="hidden lg:inline">{t.notice}</span>
+                        </>
+                    ) : (
+                        t.notice
+                    )}
                 </p>
                 <div className="flex items-center justify-center gap-2 text-xs text-gray-600">
                     <a href="#" className="hover:text-primary transition-colors">{t.terms}</a>
