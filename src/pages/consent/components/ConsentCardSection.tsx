@@ -1,8 +1,10 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import ConsentAgreementItem from './ConsentAgreementItem'
 import { CONSENT_ITEMS } from '../constants/consentContent'
 
 export default function ConsentCardSection() {
+    const navigate = useNavigate()
     const [termsAgreed, setTermsAgreed] = useState(false)
     const [privacyAgreed, setPrivacyAgreed] = useState(false)
 
@@ -10,6 +12,7 @@ export default function ConsentCardSection() {
         if (termsAgreed && privacyAgreed) {
             console.log('Consent submitted:', { termsAgreed, privacyAgreed })
             // TODO: Backend API call will be added later
+            navigate('/')
         }
     }
 
