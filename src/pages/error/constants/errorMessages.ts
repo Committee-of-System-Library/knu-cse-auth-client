@@ -1,15 +1,6 @@
-export type ErrorCode =
-    | 'unauthorized_domain'
-    | 'consent_required'
-    | 'session_expired'
-    | 'network_error'
-    | 'invalid_redirect'
-    | 'session_failed'
+import type { ErrorCode, ErrorMessage } from '../../../shared/types/error'
 
-export interface ErrorMessage {
-    title: string
-    description: string
-}
+export type { ErrorCode, ErrorMessage }
 
 export const ERROR_MESSAGES: Record<ErrorCode, ErrorMessage> = {
     unauthorized_domain: {
