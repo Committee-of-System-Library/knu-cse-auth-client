@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react'
 import { useNavigate, useSearchParams } from 'react-router-dom'
-import { authApi } from '../shared/api/auth.api'
-import { ROUTES, QUERY_PARAMS } from '../shared/constants/routes'
-import { isValidRedirectUrl, buildUrlWithRedirect } from '../shared/utils/url'
-import { handleError } from '../shared/utils/error'
-import PageContainer from '../shared/components/PageContainer'
-import LoadingSpinner from '../shared/components/LoadingSpinner'
+import { authApi } from '@/shared/api/auth.api'
+import { ROUTES, QUERY_PARAMS } from '@/shared/constants/routes'
+import { isValidRedirectUrl, buildUrlWithRedirect } from '@/shared/utils/url'
+import { handleError } from '@/shared/utils/error'
+import PageContainer from '@/shared/components/PageContainer'
+import LoadingSpinner from '@/shared/components/LoadingSpinner'
 
 export default function AuthCallbackPage() {
   const [searchParams] = useSearchParams()
