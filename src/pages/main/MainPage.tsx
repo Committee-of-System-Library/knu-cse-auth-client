@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom'
-import PageContainer from '../../shared/components/PageContainer'
-import { ROUTES } from '../../shared/constants/routes'
+import PageContainer from '@/shared/components/PageContainer'
+import { ROUTES } from '@/shared/constants/routes'
 
 export default function MainPage() {
     const navigate = useNavigate()

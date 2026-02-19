@@ -1,8 +1,8 @@
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { AlertTriangle } from 'lucide-react'
 import { ERROR_MESSAGES, type ErrorCode } from './constants/errorMessages'
-import { ROUTES, QUERY_PARAMS } from '../../shared/constants/routes'
-import PageContainer from '../../shared/components/PageContainer'
+import { ROUTES, QUERY_PARAMS } from '@/shared/constants/routes'
+import PageContainer from '@/shared/components/PageContainer'
 
 const DEFAULT_ERROR_CODE: ErrorCode = 'network_error'
 

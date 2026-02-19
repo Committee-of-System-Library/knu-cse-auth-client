@@ -1,13 +1,14 @@
 import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import ConsentAgreementItem from './ConsentAgreementItem'
-import { CONSENT_ITEMS } from '../constants/consentContent'
-import { ROUTES } from '../../../shared/constants/routes'
+import { CONSENT_ITEMS } from '@/pages/consent/constants/consentContent'
+import { ROUTES } from '@/shared/constants/routes'
+import type { SignupFormData } from '@/pages/signup/types'
 
 export default function ConsentCardSection() {
     const navigate = useNavigate()
     const location = useLocation()
-    const formData = location.state?.formData // 회원가입 폼에서 전달된 데이터
+    const formData = location.state?.formData as SignupFormData | undefined
     const isSignupFlow = !!formData // 회원가입 플로우인지 확인
 
     const [termsAgreed, setTermsAgreed] = useState(false)
