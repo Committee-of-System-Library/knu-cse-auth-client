@@ -1,4 +1,4 @@
-import type { ErrorCode, ErrorMessage } from '../../../shared/types/error'
+import type { ErrorCode, ErrorMessage } from '@/shared/types/error'
 
 export type { ErrorCode, ErrorMessage }
 
