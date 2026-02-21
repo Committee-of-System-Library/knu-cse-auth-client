@@ -47,7 +47,7 @@ export const loginTranslations: Record<Language, {
   },
   en: {
     universityName: 'Kyungpook National University',
-    cseName: 'CSE Student Council, School of IT',
+    cseName: 'CSE Student Council, IT',
     cseSub: 'KYUNGPOOK NATIONAL UNIVERSITY CSE',
     linkDept: 'Department of Computer Science',
     linkUniv: 'Kyungpook National University',
