@@ -2,13 +2,13 @@
  * HTTP 에러 클래스
  */
 export class HttpError extends Error {
-    constructor(
-        public status: number,
-        message: string,
-        public responseText?: string
-    ) {
+    status: number
+    responseText?: string
+    constructor(status: number, message: string, responseText?: string) {
         super(`HTTP ${status}: ${message}`)
         this.name = 'HttpError'
+        this.status = status
+        this.responseText = responseText
     }
 }
 
