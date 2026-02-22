@@ -68,7 +68,7 @@ export default function ConsentCardSection() {
             {/* 상단 영역 */}
             <div>
                 {/* CONSENT 타이틀 */}
-                <div className="mb-6 flex items-center justify-center">
+                <div className="mb-4 flex items-center justify-center">
                     <h2 className="text-primary text-lg lg:text-2xl font-bold whitespace-nowrap">
                         회원가입 필수 약관 동의
                     </h2>
@@ -122,8 +122,8 @@ export default function ConsentCardSection() {
                     {isSignupFlow && isSubmitting
                         ? '처리 중...'
                         : isSignupFlow
-                          ? '동의하고 회원가입'
-                          : '동의하고 계속'}
+                            ? '동의하고 회원가입'
+                            : '동의하고 계속'}
                 </Button>
             </div>
         </div>
