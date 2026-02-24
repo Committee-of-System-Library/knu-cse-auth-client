@@ -1,0 +1,73 @@
+name: Continuous Integration / Continuous Deployment
+
+concurrency:
+  group: production
+  cancel-in-progress: true
+
+on:
+  push:
+    branches: [ "main" ]
+  workflow_dispatch:
+    
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  build-docker-image:
+    runs-on: ubuntu-latest
+    env:
+      TZ: Asia/Seoul
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Getting current date
+      id: getDate
+      run: echo "date=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
+
+    - name: Login to GHCR
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      
+    - name: Building the image
+      run: docker build \
+        -t ghcr.io/${{ github.repository }}:latest \
+        -t ghcr.io/${{ github.repository }}:${{ steps.getDate.outputs.date }} \
+        .
+
+    - name: Pushing the image to GHCR
+      run: |
+        docker push ghcr.io/${{ github.repository }}:latest
+        docker push ghcr.io/${{ github.repository }}:${{ steps.getDate.outputs.date }}
+
+      
+  run-docker-image:
+    needs: build-docker-image
+    runs-on: self-hosted
+    env:
+      TZ: Asia/Seoul
+    steps:
+      - name: Login to GHCR
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+          
+      - name: Getting current image name
+        id: current_img
+        run: |
+          CURRENT_IMG=$(docker inspect sso_FE --format='{{.Config.Image}}' 2>/dev/null || echo "")
+          echo "image=$CURRENT_IMG" >> $GITHUB_OUTPUT
+
+      - name: Pulling latest image
+        run: docker pull ghcr.io/${{ github.repository }}:latest
+
+      - name: Executing container using Docker Compose
+        run: docker compose \
+          -f ${{ secrets.SSO_DOCKERFILE_PATH }} \
+          --env-file ${{ secrets.SSO_ENV_PATH }} \
+          up -d --no-build --pull never \
+          sso_FE
+
+      - name: Removing old image
+        if: success() && steps.current_img.outputs.image != ''
+        run: docker image rm ${{ steps.current_img.outputs.image }} || true
+
+      - name: Flushing docker cache
+        run: docker buildx prune -f
