@@ -10,7 +10,7 @@ export default function LoginIntroSection() {
             <div className="flex flex-col items-center justify-center flex-1">
                 <div className="hidden lg:flex flex-col items-center mb-8">
                     <div className="flex items-center gap-6">
-                        <img src="/cse_logo.svg" alt="CSE Logo" className="w-16 h-16" />
+                        <img src={`${import.meta.env.BASE_URL}cse_logo.svg`} alt="CSE Logo" className="w-16 h-16" />
                         <div className="flex flex-col">
                             <h1 className="text-primary text-3xl font-bold leading-tight">
                                 {t.universityName}

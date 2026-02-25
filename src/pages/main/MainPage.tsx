@@ -25,7 +25,7 @@ export default function MainPage() {
             <div className="w-full text-center">
                 <div className="mb-8">
                     <img 
-                        src="/cse_logo.svg" 
+                        src={`${import.meta.env.BASE_URL}cse_logo.svg`} 
                         alt="CSE Logo" 
                         className="w-20 h-20 mx-auto mb-4" 
                     />

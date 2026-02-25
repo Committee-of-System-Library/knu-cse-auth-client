@@ -35,6 +35,7 @@ cp .env.example .env.local
 | `VITE_AUTH_SERVER_BASE_URL` | SSO(Auth) 서버 주소 | `http://localhost:8081` |
 | `VITE_FRONTEND_BASE_URL` | 이 프론트엔드 주소 (로그인 콜백 등에 사용) | `http://localhost:5173` |
 | `VITE_API_BASE_URL` | 기타 API 서버 주소 (필요한 경우) | `http://localhost:40001` |
+| `VITE_BASE_PATH` | SubPath 배포 시 경로 (루트가 아니면 지정, 슬래시 없이) | `/appfn` 배포 시 `appfn` |
 
 - **주의:** Vite는 빌드 시점에 `VITE_*` 변수를 코드에 넣습니다. 값을 바꾼 뒤에는 **개발 서버를 다시 실행**해야 합니다.
 - 로그인 시 **같은 주소로 접속**해야 합니다. `localhost`와 `127.0.0.1`은 브라우저에서 서로 다른 주소로 취급되므로, `.env.local`에 `http://localhost:5173`을 썼다면 브라우저에도 `http://localhost:5173`으로 접속하세요.
@@ -147,8 +148,11 @@ docker build -t ghcr.io/committee-of-system-library/knu-cse-official-client:late
 docker build \
   --build-arg VITE_AUTH_SERVER_BASE_URL=https://auth.example.com \
   --build-arg VITE_FRONTEND_BASE_URL=https://client.example.com \
+  --build-arg VITE_BASE_PATH=appfn \
   -t ghcr.io/committee-of-system-library/knu-cse-official-client:latest .
 ```
+
+**SubPath 배포** (예: `https://chcse.knu.ac.kr/appfn`) 시 반드시 `VITE_BASE_PATH`를 설정하세요. 위 예시처럼 `VITE_BASE_PATH=appfn`으로 빌드하면 정적 자산·라우팅이 `/appfn` 기준으로 동작합니다. CI에서 이미지를 빌드할 때도 동일한 build-arg를 넘겨 주세요.
 
 **2. GHCR에 푸시**
 
