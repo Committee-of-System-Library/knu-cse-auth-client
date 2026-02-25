@@ -12,7 +12,7 @@ export default function LoginPage() {
             {/* 모바일: 로고/텍스트 상단 */}
             <div className="lg:hidden flex justify-center py-6">
                 <div className="flex items-center gap-4">
-                    <img src="/cse_logo.svg" alt="CSE Logo" className="w-12 h-12" />
+                    <img src={`${import.meta.env.BASE_URL}cse_logo.svg`} alt="CSE Logo" className="w-12 h-12" />
                     <div className="flex flex-col">
                         <h1 className="text-primary text-xl font-bold leading-tight">
                             {t.universityName}
