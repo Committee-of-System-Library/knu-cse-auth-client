@@ -28,14 +28,15 @@ jobs:
     - name: Login to GHCR
       run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
       
-    # SubPath 배포(https://chcse.knu.ac.kr/appfn)용 base path 및 URL (필요 시 Secrets에 VITE_AUTH_SERVER_BASE_URL, VITE_API_BASE_URL 설정)
+    # The environment values are modified by "docker-entrypoint.sh" when building an image.
+    # For detail, see "Dockerfile" file.
     - name: Building the image
       run: |
         docker build \
-        --build-arg VITE_BASE_PATH=appfn \
-        --build-arg VITE_FRONTEND_BASE_URL=https://chcse.knu.ac.kr/appfn \
-        --build-arg VITE_AUTH_SERVER_BASE_URL=${{ secrets.VITE_AUTH_SERVER_BASE_URL }} \
-        --build-arg VITE_API_BASE_URL=${{ secrets.VITE_API_BASE_URL }} \
+        --build-arg VITE_BASE_PATH=__VITE_BASE_PATH__ \
+        --build-arg VITE_FRONTEND_BASE_URL=__VITE_FRONTEND_BASE_URL__ \
+        --build-arg VITE_AUTH_SERVER_BASE_URL=__VITE_AUTH_SERVER_BASE_URL__ \
+        --build-arg VITE_API_BASE_URL=__VITE_API_BASE_URL__ \
         -t ghcr.io/committee-of-system-library/sso-fe:latest \
         -t ghcr.io/committee-of-system-library/sso-fe:${{ steps.getDate.outputs.date }} \
         .
