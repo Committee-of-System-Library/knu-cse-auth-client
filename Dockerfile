@@ -1,6 +1,5 @@
 # 1단계: Node로 빌드
 FROM node:20-alpine AS builder
-
 WORKDIR /app
 
 # 패키지 설치
@@ -22,14 +21,20 @@ RUN pnpm build
 
 # 2단계: 빌드 결과만 nginx로 서빙
 FROM nginx:alpine
-
 RUN rm -rf /usr/share/nginx/html/*
-
 COPY --from=builder /app/dist /usr/share/nginx/html
-
 # SubPath(/appfn) 지원 nginx 설정
 COPY nginx-default.conf /etc/nginx/conf.d/default.conf
 
-EXPOSE 80
+RUN cat << 'EOF' > /docker-entrypoint.d/40-replace-env.sh
+#!/bin/sh
+find /usr/share/nginx/html -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i "s|__VITE_BASE_PATH__|${VITE_BASE_PATH}|g" {} +
+find /usr/share/nginx/html -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i "s|__VITE_FRONTEND_BASE_URL__|${VITE_FRONTEND_BASE_URL}|g" {} +
+find /usr/share/nginx/html -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i "s|__VITE_AUTH_SERVER_BASE_URL__|${VITE_AUTH_SERVER_BASE_URL}|g" {} +
+find /usr/share/nginx/html -type f \( -name "*.js" -o -name "*.html" \) -exec sed -i "s|__VITE_API_BASE_URL__|${VITE_API_BASE_URL}|g" {} +
+EOF
 
+RUN chmod +x /docker-entrypoint.d/40-replace-env.sh
+
+EXPOSE 80
 CMD ["nginx", "-g", "daemon off;"]
