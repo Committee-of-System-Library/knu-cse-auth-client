@@ -12,6 +12,13 @@ on:
 permissions:
   contents: read
   packages: write
+  id-token: write
+
+env:
+  REGISTRY: ghcr.io
+  ORG: committee-of-system-library
+  IMAGE_NAME: sso-fe
+  CONT_NAME: sso_FE
 
 jobs:
   build-docker-image:
@@ -26,7 +33,7 @@ jobs:
       run: echo "date=$(date +%Y%m%d%H%M%S)" >> "$GITHUB_OUTPUT"
 
     - name: Login to GHCR
-      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+      run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
       
     # The environment values are modified by "docker-entrypoint.sh" when building an image.
     # For detail, see "Dockerfile" file.
@@ -37,14 +44,14 @@ jobs:
         --build-arg VITE_FRONTEND_BASE_URL=__VITE_FRONTEND_BASE_URL__ \
         --build-arg VITE_AUTH_SERVER_BASE_URL=__VITE_AUTH_SERVER_BASE_URL__ \
         --build-arg VITE_API_BASE_URL=__VITE_API_BASE_URL__ \
-        -t ghcr.io/committee-of-system-library/sso-fe:latest \
-        -t ghcr.io/committee-of-system-library/sso-fe:${{ steps.getDate.outputs.date }} \
+        -t $REGISTRY/$ORG/$IMAGE_NAME:latest \
+        -t $REGISTRY/$ORG/$IMAGE_NAME:${{ steps.getDate.outputs.date }} \
         .
 
     - name: Pushing the image to GHCR
       run: |
-        docker push ghcr.io/committee-of-system-library/sso-fe:latest
-        docker push ghcr.io/committee-of-system-library/sso-fe:${{ steps.getDate.outputs.date }}
+        docker push $REGISTRY/$ORG/$IMAGE_NAME:latest
+        docker push $REGISTRY/$ORG/$IMAGE_NAME:${{ steps.getDate.outputs.date }}
 
       
   run-docker-image:
@@ -54,16 +61,16 @@ jobs:
       TZ: Asia/Seoul
     steps:
       - name: Login to GHCR
-        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+        run: echo "${{ secrets.GITHUB_TOKEN }}" | docker login $REGISTRY -u ${{ github.actor }} --password-stdin
           
       - name: Getting current image name
         id: current_img
         run: |
-          CURRENT_IMG=$(docker inspect sso_FE --format='{{.Config.Image}}' 2>/dev/null || echo "")
+          CURRENT_IMG=$(docker inspect $CONT_NAME --format='{{.Config.Image}}' 2>/dev/null || echo "")
           echo "image=$CURRENT_IMG" >> $GITHUB_OUTPUT
 
       - name: Pulling latest image
-        run: docker pull ghcr.io/committee-of-system-library/sso-fe:latest
+        run: docker pull $REGISTRY/$ORG/$IMAGE_NAME:latest
 
       - name: Executing container using Docker Compose
         run: |
@@ -71,7 +78,7 @@ jobs:
           -f ${{ secrets.SSO_DOCKERFILE_PATH }} \
           --env-file ${{ secrets.SSO_ENV_PATH }} \
           up -d --no-build --pull never \
-          sso_FE
+          $CONT_NAME
 
       - name: Removing old image
         if: success() && steps.current_img.outputs.image != ''
