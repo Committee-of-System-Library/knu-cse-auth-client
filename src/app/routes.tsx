@@ -5,8 +5,16 @@ import ConsentPage from '@/pages/consent/ConsentPage'
 import ErrorPage from '@/pages/error/ErrorPage'
 import SignupFormPage from '@/pages/signup/SignupFormPage'
 import MainPage from '@/pages/main/MainPage'
+import AdminLayout from '@/pages/admin/components/AdminLayout'
+import AdminDashboardPage from '@/pages/admin/AdminDashboardPage'
+import AdminUsersPage from '@/pages/admin/AdminUsersPage'
+import AdminVerificationsPage from '@/pages/admin/AdminVerificationsPage'
+import AdminRegistryPage from '@/pages/admin/AdminRegistryPage'
+import AdminAppsPage from '@/pages/admin/AdminAppsPage'
+import DeveloperLayout from '@/pages/developer/components/DeveloperLayout'
+import DeveloperAppsPage from '@/pages/developer/DeveloperAppsPage'
+import DeveloperAppNewPage from '@/pages/developer/DeveloperAppNewPage'
 
-// SubPath 배포 시 VITE_BASE_PATH와 동일하게 (예: /appfn)
 const basename = (import.meta.env.VITE_BASE_PATH as string)?.trim()
   ? `/${(import.meta.env.VITE_BASE_PATH as string).trim().replace(/^\/|\/$/g, '')}`
   : undefined
@@ -19,6 +27,25 @@ export const router = createBrowserRouter(
     { path: "/error", element: <ErrorPage /> },
     { path: "/signup", element: <SignupFormPage /> },
     { path: "/main", element: <MainPage /> },
+    {
+      path: "/admin",
+      element: <AdminLayout />,
+      children: [
+        { index: true, element: <AdminDashboardPage /> },
+        { path: "users", element: <AdminUsersPage /> },
+        { path: "verifications", element: <AdminVerificationsPage /> },
+        { path: "registry", element: <AdminRegistryPage /> },
+        { path: "apps", element: <AdminAppsPage /> },
+      ],
+    },
+    {
+      path: "/developer",
+      element: <DeveloperLayout />,
+      children: [
+        { index: true, element: <DeveloperAppsPage /> },
+        { path: "apps/new", element: <DeveloperAppNewPage /> },
+      ],
+    },
   ],
   basename ? { basename } : {},
 )

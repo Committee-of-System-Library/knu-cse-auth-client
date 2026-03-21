@@ -1,32 +1,22 @@
-import { useLanguage } from '@/contexts/LanguageContext'
-import { loginTranslations } from './translations'
 import LoginIntroSection from './components/LoginIntroSection'
 import LoginCardSection from './components/LoginCardSection'
 
 export default function LoginPage() {
-    const { language } = useLanguage()
-    const t = loginTranslations[language]
-
     return (
-        <div className="min-h-screen flex flex-col lg:flex-row bg-gray-50 px-6 lg:px-24 py-8">
-            {/* 모바일: 로고/텍스트 상단 */}
-            <div className="lg:hidden flex justify-center py-6">
-                <div className="flex items-center gap-4">
-                    <img src={`${import.meta.env.BASE_URL}cse_logo.svg`} alt="CSE Logo" className="w-12 h-12" />
-                    <div className="flex flex-col">
-                        <h1 className="text-primary text-xl font-bold leading-tight">
-                            {t.universityName}
-                        </h1>
-                        <h1 className="text-primary text-xl font-bold leading-tight">
-                            {t.cseName}
-                        </h1>
-                        <p className="text-gray-600 text-xs mt-1">{t.cseSub}</p>
-                    </div>
-                </div>
+        <div className="min-h-screen relative overflow-hidden">
+            {/* 배경 이미지 */}
+            <div
+                className="absolute inset-0 bg-cover bg-center bg-no-repeat scale-105"
+                style={{ backgroundImage: `url(${import.meta.env.BASE_URL}cse-building.jpg)` }}
+            />
+            {/* 오버레이 */}
+            <div className="absolute inset-0 bg-gradient-to-br from-[#191F28]/75 via-[#191F28]/55 to-[#1A196F]/50" />
+
+            {/* 콘텐츠 */}
+            <div className="relative z-10 min-h-screen flex flex-col lg:flex-row items-center justify-center px-6 lg:px-20 py-8 gap-8 lg:gap-16">
+                <LoginIntroSection />
+                <LoginCardSection />
             </div>
-            <LoginIntroSection />
-            <LoginCardSection />
         </div>
     )
 }
-
