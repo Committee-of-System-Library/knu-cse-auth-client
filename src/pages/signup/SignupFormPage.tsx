@@ -280,7 +280,12 @@ export default function SignupFormPage() {
                                         <SelectValue placeholder="단과대학을 선택해주세요" />
                                     </SelectTrigger>
                                     <SelectContent>
-                                        {KNU_COLLEGES.map((c) => (
+                                        <div className="px-2 py-1.5 text-[11px] font-semibold text-ink-300 uppercase tracking-wider">대구캠퍼스</div>
+                                        {KNU_COLLEGES.filter((c) => c.campus === '대구').map((c) => (
+                                            <SelectItem key={c.college} value={c.college}>{c.college}</SelectItem>
+                                        ))}
+                                        <div className="px-2 py-1.5 text-[11px] font-semibold text-ink-300 uppercase tracking-wider mt-1">상주캠퍼스</div>
+                                        {KNU_COLLEGES.filter((c) => c.campus === '상주').map((c) => (
                                             <SelectItem key={c.college} value={c.college}>{c.college}</SelectItem>
                                         ))}
                                     </SelectContent>
