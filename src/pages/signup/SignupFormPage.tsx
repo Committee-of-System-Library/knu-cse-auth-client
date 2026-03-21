@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { ROUTES } from '@/shared/constants/routes'
 import {
@@ -12,17 +12,18 @@ import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { cn } from '@/lib/utils'
 import { authApi } from '@/shared/api/auth.api'
+import LoadingSpinner from '@/shared/components/LoadingSpinner'
 import type { SignupFormData } from './types'
 import { MAJOR_OPTIONS } from './constants'
 import { KNU_COLLEGES } from './knuDepartments'
 
-type Step = 'student_number' | 'cse_major' | 'not_cse_choice' | 'other_dept' | 'external'
+type Step = 'loading' | 'no_session' | 'student_number' | 'cse_major' | 'not_cse_choice' | 'other_dept' | 'external'
 
 export default function SignupFormPage() {
     const navigate = useNavigate()
 
     // 공통 상태
-    const [step, setStep] = useState<Step>('student_number')
+    const [step, setStep] = useState<Step>('loading')
     const [studentId, setStudentId] = useState('')
     const [isVerifying, setIsVerifying] = useState(false)
     const [verifyError, setVerifyError] = useState('')
@@ -36,6 +37,17 @@ export default function SignupFormPage() {
     const [department, setDepartment] = useState('')
 
     const [errors, setErrors] = useState<Record<string, string>>({})
+
+    // 마운트 시 OAuth 세션 확인 — 세션 없으면 직접 접근으로 간주
+    useEffect(() => {
+        authApi.me()
+            .then((res) => {
+                setStep(res.authenticated ? 'student_number' : 'no_session')
+            })
+            .catch(() => {
+                setStep('no_session')
+            })
+    }, [])
 
     // Step 1: 학번 입력 → 검증
     const handleVerify = async () => {
@@ -98,6 +110,32 @@ export default function SignupFormPage() {
     }
 
     const selectedCollegeData = KNU_COLLEGES.find((c) => c.college === college)
+
+    if (step === 'loading') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-surface-50">
+                <LoadingSpinner message="확인 중..." size="md" />
+            </div>
+        )
+    }
+
+    if (step === 'no_session') {
+        return (
+            <div className="min-h-screen flex items-center justify-center bg-surface-50 px-6">
+                <div className="text-center">
+                    <p className="text-5xl font-bold text-ink-200 mb-4">400</p>
+                    <h1 className="text-xl font-bold text-ink mb-2">잘못된 접근입니다</h1>
+                    <p className="text-ink-300 text-sm mb-8">
+                        회원가입 페이지는 Google 로그인을 통해 접근해야 합니다.<br />
+                        인증 세션이 존재하지 않습니다.
+                    </p>
+                    <a href="/developer" className="text-primary text-sm font-medium hover:underline">
+                        개발자 포털로 이동
+                    </a>
+                </div>
+            </div>
+        )
+    }
 
     return (
         <div className="min-h-screen flex items-center justify-center bg-surface-50 px-6 py-8">
