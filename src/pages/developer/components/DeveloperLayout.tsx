@@ -1,6 +1,26 @@
+import { useEffect, useState } from 'react'
 import { NavLink, Outlet } from 'react-router-dom'
+import { LogOut } from 'lucide-react'
+import { authApi } from '@/shared/api/auth.api'
 
 export default function DeveloperLayout() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false)
+
+    useEffect(() => {
+        authApi.me()
+            .then((res) => setIsLoggedIn(res.authenticated))
+            .catch(() => setIsLoggedIn(false))
+    }, [])
+
+    const handleLogout = async () => {
+        try {
+            await authApi.logout()
+        } catch {
+            // ignore
+        }
+        window.location.href = '/developer'
+    }
+
     return (
         <div className="min-h-screen bg-surface-50">
             {/* 헤더 */}
@@ -30,6 +50,15 @@ export default function DeveloperLayout() {
                         >
                             내 앱
                         </NavLink>
+                        {isLoggedIn && (
+                            <button
+                                onClick={handleLogout}
+                                className="flex items-center gap-1.5 text-ink-300 hover:text-danger font-medium transition-colors"
+                            >
+                                <LogOut className="w-3.5 h-3.5" />
+                                로그아웃
+                            </button>
+                        )}
                     </nav>
                 </div>
             </header>
