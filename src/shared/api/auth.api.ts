@@ -52,7 +52,6 @@ export type AppApproveResponse = {
     id: number
     clientId: string
     clientSecret: string
-    jwtSecret: string
 }
 
 /**

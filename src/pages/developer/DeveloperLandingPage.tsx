@@ -46,7 +46,7 @@ export default function DeveloperLandingPage() {
                     <FlowStep
                         num={1}
                         title="앱 등록"
-                        desc="개발자 포털에서 앱을 등록하면 관리자 승인 후 Client ID, Client Secret, JWT Secret이 발급됩니다."
+                        desc="개발자 포털에서 앱을 등록하면 관리자 승인 후 Client ID와 Client Secret이 발급됩니다."
                     />
                     <FlowStep
                         num={2}
@@ -66,7 +66,7 @@ export default function DeveloperLandingPage() {
                     <FlowStep
                         num={5}
                         title="토큰 검증 및 사용"
-                        desc="발급받은 JWT Secret(HMAC-SHA256)으로 토큰을 검증하고, 클레임에서 사용자 정보를 추출합니다."
+                        desc="발급받은 Client Secret(HMAC-SHA256)으로 토큰을 검증하고, 클레임에서 사용자 정보를 추출합니다."
                     />
                 </div>
             </section>
@@ -104,7 +104,7 @@ dependencies {
                         <CodeBlock>{`knu-cse:
   sso:
     client-id: cse-a1b2c3d4              # 발급받은 Client ID
-    client-secret: \${JWT_SECRET}          # 발급받은 JWT Secret`}</CodeBlock>
+    client-secret: \${CLIENT_SECRET}       # 발급받은 Client Secret (JWT 검증에도 사용)`}</CodeBlock>
                     </div>
 
                     <div>
@@ -218,7 +218,7 @@ public Map<String, Object> me(@AuthenticationPrincipal KnuCseUser user) {
 
 payload = jwt.decode(
     token,
-    "발급받은_JWT_Secret",
+    "발급받은_Client_Secret",
     algorithms=["HS256"],
     audience="cse-a1b2c3d4"
 )
@@ -231,7 +231,7 @@ print(payload["name"], payload["email"])`}</CodeBlock>
                         </h3>
                         <CodeBlock>{`const jwt = require('jsonwebtoken');
 
-const payload = jwt.verify(token, '발급받은_JWT_Secret', {
+const payload = jwt.verify(token, '발급받은_Client_Secret', {
     algorithms: ['HS256'],
     audience: 'cse-a1b2c3d4',
 });
@@ -243,7 +243,7 @@ console.log(payload.name, payload.email);`}</CodeBlock>
                             Go (golang-jwt)
                         </h3>
                         <CodeBlock>{`token, err := jwt.Parse(tokenString, func(t *jwt.Token) (interface{}, error) {
-    return []byte("발급받은_JWT_Secret"), nil
+    return []byte("발급받은_Client_Secret"), nil
 })
 claims := token.Claims.(jwt.MapClaims)
 fmt.Println(claims["name"], claims["email"])`}</CodeBlock>
@@ -368,7 +368,7 @@ public class StudentController { ... }`}</CodeBlock>
             {/* CTA */}
             <section className="py-10 border-t border-surface-200">
                 <div className="text-center">
-                    <p className="text-ink-500 text-sm mb-4">앱을 등록하고 Client ID와 JWT Secret을 발급받으세요.</p>
+                    <p className="text-ink-500 text-sm mb-4">앱을 등록하고 Client ID와 Client Secret을 발급받으세요.</p>
                     <button
                         onClick={handleStart}
                         className="inline-flex items-center gap-2 px-5 py-2.5 bg-ink text-white rounded-lg text-sm font-medium hover:bg-ink-700 transition-colors"

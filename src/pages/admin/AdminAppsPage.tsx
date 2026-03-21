@@ -205,16 +205,11 @@ export default function AdminAppsPage() {
                                 visible={secretVisible}
                                 onToggle={() => setSecretVisible(!secretVisible)}
                             />
-                            <SecretField
-                                label="JWT Secret (HMAC-SHA256)"
-                                value={approveResult.jwtSecret}
-                                copied={copiedField === 'jwtSecret'}
-                                onCopy={() => copyToClipboard(approveResult.jwtSecret, 'jwtSecret')}
-                                hideable
-                                visible={secretVisible}
-                                onToggle={() => setSecretVisible(!secretVisible)}
-                            />
                         </div>
+
+                        <p className="text-xs text-ink-300 mt-3">
+                            SSO Starter 설정 시 <code className="text-ink-500">client-secret</code>에 위 Client Secret을 넣으세요.
+                        </p>
 
                         <button
                             onClick={() => setApproveResult(null)}
