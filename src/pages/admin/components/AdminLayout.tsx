@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
 import { Users, ShieldCheck, Database, AppWindow, LayoutDashboard, LogOut } from 'lucide-react'
 import { authApi } from '@/shared/api/auth.api'
-import { saveReturnPath } from '@/shared/utils/oauth'
+import { buildSSOLoginUrl } from '@/shared/utils/oauth'
 import LoadingSpinner from '@/shared/components/LoadingSpinner'
 
 const navItems = [
@@ -21,8 +21,8 @@ export default function AdminLayout() {
 
     useEffect(() => {
         const redirectToLogin = () => {
-            saveReturnPath('/admin')
-            navigate('/login')
+            const url = buildSSOLoginUrl({ returnPath: '/admin' })
+            navigate(url)
         }
         authApi.me()
             .then((res) => {

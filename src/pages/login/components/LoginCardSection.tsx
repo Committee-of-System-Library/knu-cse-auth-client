@@ -1,5 +1,5 @@
 import { useLanguage } from '@/contexts/LanguageContext'
-import { buildOAuthLoginUrl, INTERNAL_CLIENT_ID } from '@/shared/utils/oauth'
+import { getAuthServerLoginUrl, saveOAuthQueryString } from '@/shared/utils/oauth'
 import { loginTranslations } from '../translations'
 
 export default function LoginCardSection() {
@@ -7,8 +7,11 @@ export default function LoginCardSection() {
     const t = loginTranslations[language]
 
     const handleLoginClick = () => {
-        const url = buildOAuthLoginUrl({ clientId: INTERNAL_CLIENT_ID })
-        window.location.href = url
+        // URL의 query params(client_id, redirect_uri, state)를 auth-server에 그대로 전달
+        const params = window.location.search
+        // signup 후 재트리거를 위해 원본 query string 저장
+        saveOAuthQueryString(params)
+        window.location.href = getAuthServerLoginUrl(params)
     }
 
     return (

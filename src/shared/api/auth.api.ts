@@ -1,4 +1,3 @@
-import { http } from "./http"
 import { authHttp } from "./authHttp"
 
 export type MeResponse = {
@@ -23,7 +22,7 @@ export type SignupResponse = {
  * 로그아웃 후 쿠키 삭제되므로 호출 후 로그인 페이지로 이동하면 됨.
  */
 export const authApi = {
-    me: () => http<MeResponse>("/api/auth/me"),
+    me: () => authHttp<MeResponse>("/auth/me"),
     logout: () => authHttp<void>("/logout", { method: "POST" }),
     signup: (body: SignupRequest) =>
         authHttp<SignupResponse>("/signup", {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { AppWindow, Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { authApi } from '@/shared/api/auth.api'
-import { saveReturnPath } from '@/shared/utils/oauth'
+import { buildSSOLoginUrl } from '@/shared/utils/oauth'
 import LoadingSpinner from '@/shared/components/LoadingSpinner'
 
 export default function DeveloperAppsPage() {
@@ -11,8 +11,8 @@ export default function DeveloperAppsPage() {
 
     useEffect(() => {
         const redirectToLogin = () => {
-            saveReturnPath('/developer/apps')
-            navigate('/login')
+            const url = buildSSOLoginUrl({ returnPath: '/developer/apps' })
+            navigate(url)
         }
         authApi.me()
             .then((res) => {

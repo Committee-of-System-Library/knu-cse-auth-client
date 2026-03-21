@@ -9,6 +9,11 @@ export const OAUTH_STATE_KEY = 'oauth_state'
 export const RETURN_PATH_KEY = 'sso_return_path'
 
 /**
+ * OAuth 원본 query string 저장 키 (signup 후 재트리거용)
+ */
+const OAUTH_QUERY_KEY = 'sso_oauth_query'
+
+/**
  * 내부 SSO 클라이언트 ID (Admin/Developer 콘솔 로그인용)
  */
 export const INTERNAL_CLIENT_ID = 'cse-internal'
@@ -100,17 +105,42 @@ function getBasePath(): string {
 }
 
 /**
- * OAuth 로그인 URL을 생성한다.
- * Auth Server /login으로 이동 (서버가 Keycloak으로 302).
+ * OAuth query string을 sessionStorage에 저장한다.
+ * LoginPage에서 auth-server로 이동 전에 호출 → signup 후 재트리거 시 사용.
+ */
+export function saveOAuthQueryString(qs: string): void {
+  sessionStorage.setItem(OAUTH_QUERY_KEY, qs)
+}
+
+/**
+ * 저장된 OAuth query string을 꺼내고 삭제한다.
+ */
+export function consumeOAuthQueryString(): string | null {
+  const qs = sessionStorage.getItem(OAUTH_QUERY_KEY)
+  sessionStorage.removeItem(OAUTH_QUERY_KEY)
+  return qs
+}
+
+/**
+ * Auth Server /login URL을 직접 생성한다.
+ * LoginCardSection에서 query params 전달 시, ConsentCardSection에서 signup 후 OAuth 재트리거 시 사용.
+ */
+export function getAuthServerLoginUrl(queryString: string): string {
+  const baseUrl = getAuthServerBaseUrl()
+  return `${baseUrl}/login${queryString}`
+}
+
+/**
+ * 프론트 /login 페이지로 이동하는 SSO URL을 생성한다.
+ * 내부 서비스(Admin/Developer)에서 로그인 진입 시 사용.
  *
- * @param options.clientId - OAuth client_id (내부 로그인 시 'cse-internal')
+ * @param options.clientId - OAuth client_id (기본값: INTERNAL_CLIENT_ID)
  * @param options.returnPath - 로그인 후 돌아갈 프론트 경로 (sessionStorage에 저장)
  */
-export function buildOAuthLoginUrl(options?: {
+export function buildSSOLoginUrl(options?: {
   clientId?: string
   returnPath?: string
 }): string {
-  const baseUrl = getAuthServerBaseUrl()
   const state = saveOAuthState()
 
   if (options?.returnPath) {
@@ -122,15 +152,12 @@ export function buildOAuthLoginUrl(options?: {
   const redirectUri = `${origin}${basePath}/auth/callback`
 
   const params = new URLSearchParams({
+    client_id: options?.clientId || INTERNAL_CLIENT_ID,
     redirect_uri: redirectUri,
     state,
   })
 
-  if (options?.clientId) {
-    params.set('client_id', options.clientId)
-  }
-
-  return `${baseUrl}/login?${params.toString()}`
+  return `/login?${params.toString()}`
 }
 
 /**

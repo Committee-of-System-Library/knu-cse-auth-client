@@ -4,7 +4,7 @@ import { ChevronLeft, Plus, X } from 'lucide-react'
 import { Button } from '@/components/ui/button'
 import { FormField } from '@/components/ui/form-field'
 import { authApi } from '@/shared/api/auth.api'
-import { saveReturnPath } from '@/shared/utils/oauth'
+import { buildSSOLoginUrl } from '@/shared/utils/oauth'
 import LoadingSpinner from '@/shared/components/LoadingSpinner'
 
 export default function DeveloperAppNewPage() {
@@ -17,8 +17,8 @@ export default function DeveloperAppNewPage() {
 
     useEffect(() => {
         const redirectToLogin = () => {
-            saveReturnPath('/developer/apps/new')
-            navigate('/login')
+            const url = buildSSOLoginUrl({ returnPath: '/developer/apps/new' })
+            navigate(url)
         }
         authApi.me()
             .then((res) => {

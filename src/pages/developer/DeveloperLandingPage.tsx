@@ -1,13 +1,13 @@
 import { ArrowRight } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
-import { saveReturnPath } from '@/shared/utils/oauth'
+import { buildSSOLoginUrl } from '@/shared/utils/oauth'
 
 export default function DeveloperLandingPage() {
     const navigate = useNavigate()
 
     const handleLogin = () => {
-        saveReturnPath('/developer/apps')
-        navigate('/login')
+        const url = buildSSOLoginUrl({ returnPath: '/developer/apps' })
+        navigate(url)
     }
 
     return (
