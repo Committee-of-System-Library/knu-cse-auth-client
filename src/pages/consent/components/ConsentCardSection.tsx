@@ -26,15 +26,20 @@ export default function ConsentCardSection() {
             setSubmitError(null)
             setIsSubmitting(true)
             try {
-                await authApi.signup({
+                const res = await authApi.signup({
                     studentNumber: formData.studentId,
                     major: formData.major,
                     userType: formData.userType,
                 })
                 // 회원가입 성공 → 서버에서 쿠키 설정 완료
-                // 내부 서비스: returnPath로 이동 (callback 거치면 state 검증 실패)
-                const returnPath = consumeReturnPath()
-                navigate(returnPath || '/developer')
+                if (res.redirectUrl) {
+                    // 외부 서비스: 서버가 반환한 redirect_uri?state=&token=JWT로 이동
+                    window.location.href = res.redirectUrl
+                } else {
+                    // 내부 서비스(fallback): returnPath 또는 /developer로 이동
+                    const returnPath = consumeReturnPath()
+                    navigate(returnPath || '/developer')
+                }
             } catch (err) {
                 let message = '회원가입에 실패했습니다. 다시 시도해 주세요.'
                 if (err instanceof HttpError && err.responseText) {
