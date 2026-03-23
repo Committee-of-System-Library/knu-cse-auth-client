@@ -39,6 +39,38 @@ export type ClientApplication = {
     updatedAt: string
 }
 
+/** 사용자 (admin) */
+export type Student = {
+    id: number; name: string; studentNumber: string;
+    major: string; grade: string | null; gender: string | null;
+    userType: 'CSE_STUDENT' | 'KNU_OTHER_DEPT' | 'EXTERNAL';
+    role: 'ADMIN' | 'EXECUTIVE' | 'FINANCE' | 'PLANNING' | 'PR' | 'CULTURE' | 'STUDENT' | null;
+    createdAt: string; updatedAt: string;
+}
+
+/** 인증 요청 */
+export type VerificationRequest = {
+    id: number; studentId: number;
+    requestedStudentNumber: string;
+    evidenceDescription: string;
+    status: 'PENDING' | 'APPROVED' | 'REJECTED';
+    reviewerId: number | null; reviewComment: string | null;
+    createdAt: string; reviewedAt: string | null;
+}
+
+/** CSE 학생 명단 */
+export type CseStudentRegistry = {
+    id: number; studentNumber: string; name: string;
+    major: string; grade: number;
+    manuallyAdded: boolean; createdAt: string; updatedAt: string;
+}
+
+/** CSV 업로드 결과 */
+export type RegistryUploadResult = {
+    totalRows: number; insertedCount: number;
+    updatedCount: number; errorCount: number;
+}
+
 /** 앱 등록 요청 */
 export type AppRegisterRequest = {
     appName: string
@@ -94,5 +126,57 @@ export const authApi = {
             }),
         suspend: (id: number) =>
             authHttp<ClientApplication>(`/appfn/api/admin/apps/${id}/suspend`, { method: "PUT" }),
+    },
+
+    adminUsers: {
+        list: () => authHttp<Student[]>("/appfn/api/admin/users"),
+        changeRole: (id: number, role: string) =>
+            authHttp<void>(`/appfn/api/admin/users/${id}/role`, {
+                method: "PUT",
+                body: JSON.stringify({ role }),
+            }),
+        changeUserType: (id: number, userType: string) =>
+            authHttp<void>(`/appfn/api/admin/users/${id}/user-type`, {
+                method: "PUT",
+                body: JSON.stringify({ userType }),
+            }),
+        delete: (id: number) =>
+            authHttp<void>(`/appfn/api/admin/users/${id}`, { method: "DELETE" }),
+    },
+
+    adminVerifications: {
+        list: (status?: string) =>
+            authHttp<VerificationRequest[]>(
+                `/appfn/api/admin/verifications${status ? `?status=${status}` : ''}`
+            ),
+        approve: (id: number, comment?: string) =>
+            authHttp<void>(`/appfn/api/admin/verifications/${id}/approve`, {
+                method: "PUT",
+                body: JSON.stringify(comment ? { comment } : {}),
+            }),
+        reject: (id: number, comment?: string) =>
+            authHttp<void>(`/appfn/api/admin/verifications/${id}/reject`, {
+                method: "PUT",
+                body: JSON.stringify(comment ? { comment } : {}),
+            }),
+    },
+
+    adminRegistry: {
+        list: () => authHttp<CseStudentRegistry[]>("/appfn/api/admin/registry"),
+        upload: (file: File) => {
+            const form = new FormData()
+            form.append("file", file)
+            return authHttp<RegistryUploadResult>("/appfn/api/admin/registry/upload", {
+                method: "POST",
+                body: form,
+            })
+        },
+        add: (body: { studentNumber: string; name: string; major: string; grade: number }) =>
+            authHttp<CseStudentRegistry>("/appfn/api/admin/registry", {
+                method: "POST",
+                body: JSON.stringify(body),
+            }),
+        delete: (studentNumber: string) =>
+            authHttp<void>(`/appfn/api/admin/registry/${studentNumber}`, { method: "DELETE" }),
     },
 }

@@ -1,12 +1,7 @@
-import { Users, ShieldCheck, Database, AppWindow, ArrowRight } from 'lucide-react'
+import { useEffect, useState } from 'react'
+import { Users, ShieldCheck, Database, AppWindow, ArrowRight, Loader2 } from 'lucide-react'
 import { NavLink } from 'react-router-dom'
-
-const stats = [
-    { label: '전체 사용자', value: '—', icon: Users },
-    { label: '인증 대기', value: '—', icon: ShieldCheck },
-    { label: '학생 명단', value: '—', icon: Database },
-    { label: '클라이언트', value: '—', icon: AppWindow },
-]
+import { authApi } from '@/shared/api/auth.api'
 
 const quickActions = [
     { title: '사용자 관리', desc: '역할 변경, 계정 관리', to: '/admin/users' },
@@ -16,6 +11,31 @@ const quickActions = [
 ]
 
 export default function AdminDashboardPage() {
+    const [stats, setStats] = useState([
+        { label: '전체 사용자', value: '—', icon: Users },
+        { label: '인증 대기', value: '—', icon: ShieldCheck },
+        { label: '학생 명단', value: '—', icon: Database },
+        { label: '클라이언트', value: '—', icon: AppWindow },
+    ])
+    const [loading, setLoading] = useState(true)
+
+    useEffect(() => {
+        Promise.allSettled([
+            authApi.adminUsers.list(),
+            authApi.adminVerifications.list('PENDING'),
+            authApi.adminRegistry.list(),
+            authApi.adminApps.list(),
+        ]).then(([users, verifications, registry, apps]) => {
+            setStats([
+                { label: '전체 사용자', value: users.status === 'fulfilled' ? String(users.value.length) : '—', icon: Users },
+                { label: '인증 대기', value: verifications.status === 'fulfilled' ? String(verifications.value.length) : '—', icon: ShieldCheck },
+                { label: '학생 명단', value: registry.status === 'fulfilled' ? String(registry.value.length) : '—', icon: Database },
+                { label: '클라이언트', value: apps.status === 'fulfilled' ? String(apps.value.length) : '—', icon: AppWindow },
+            ])
+            setLoading(false)
+        })
+    }, [])
+
     return (
         <div className="animate-fade-up">
             <h1 className="text-lg font-bold text-ink mb-6">대시보드</h1>
@@ -24,7 +44,11 @@ export default function AdminDashboardPage() {
             <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 mb-8">
                 {stats.map((stat) => (
                     <div key={stat.label} className="flex items-center gap-3 bg-white rounded-lg px-4 py-3 border border-surface-200">
-                        <stat.icon className="w-4 h-4 text-ink-300 shrink-0" />
+                        {loading ? (
+                            <Loader2 className="w-4 h-4 text-ink-200 animate-spin shrink-0" />
+                        ) : (
+                            <stat.icon className="w-4 h-4 text-ink-300 shrink-0" />
+                        )}
                         <div className="min-w-0">
                             <p className="text-lg font-semibold text-ink leading-tight">{stat.value}</p>
                             <p className="text-ink-300 text-[11px]">{stat.label}</p>
