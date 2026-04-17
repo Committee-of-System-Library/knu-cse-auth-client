@@ -190,21 +190,22 @@ export default function SnackScannerPage() {
             {/* Hint banner — auto fades after a few seconds */}
             <HintBanner />
 
-            {/* Scan target — large, soft, non-restrictive */}
-            <div
-                className="pointer-events-none absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2"
-                style={{
-                    width: 'min(78vw, 78vh, 360px)',
-                    height: 'min(78vw, 78vh, 360px)',
-                }}
-            >
-                <CornerBrackets />
+            {/* Middle area: brackets + sub hint live inside the flex flow so the
+                bottom sheet never overlaps them, regardless of viewport height. */}
+            <div className="pointer-events-none relative z-10 flex flex-1 flex-col items-center justify-center gap-4 px-4">
+                <div
+                    className="relative"
+                    style={{
+                        width: 'min(72vw, 50vh, 320px)',
+                        height: 'min(72vw, 50vh, 320px)',
+                    }}
+                >
+                    <CornerBrackets />
+                </div>
+                <p className="text-center text-[11px] font-medium text-white/70 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.6))]">
+                    QR이 화면 안에 들어오면 자동으로 인식됩니다
+                </p>
             </div>
-
-            {/* Sub hint — positioning is forgiving */}
-            <p className="pointer-events-none absolute left-1/2 top-1/2 mt-[calc(min(78vw,78vh,360px)/2+16px)] -translate-x-1/2 text-center text-[11px] font-medium text-white/70 [filter:drop-shadow(0_1px_2px_rgba(0,0,0,0.6))]">
-                QR이 화면 안에 들어오면 자동으로 인식됩니다
-            </p>
 
             {/* Bottom sheet */}
             <div

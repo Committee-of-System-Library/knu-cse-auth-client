@@ -38,14 +38,15 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
         scannerRef.current = scanner
         setState('starting')
 
-        // Higher resolution + continuous focus dramatically improves QR detection
-        // in low light and at angles. qrbox is omitted intentionally so the
-        // scanner reads the entire video frame — the on-screen brackets are
-        // just a visual hint, not a hard constraint.
+        // qrbox is omitted intentionally so the scanner reads the entire video
+        // frame — the on-screen brackets are just a visual hint.
+        // We deliberately do NOT pass `aspectRatio` or width/height constraints:
+        // those conflict on mobile (aspectRatio ≈ 2 vs width:1920/height:1080
+        // = 1.78), which crops the stream and zooms the camera in so far that
+        // QR codes fall outside the frame. Letting the device pick its native
+        // orientation/resolution gives a correct, undistorted preview.
         const videoConstraints: MediaTrackConstraints = {
             facingMode: { ideal: 'environment' },
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
         }
 
         scanner
@@ -53,7 +54,6 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
                 { facingMode: 'environment' },
                 {
                     fps: 15,
-                    aspectRatio: window.innerHeight / window.innerWidth,
                     disableFlip: false,
                     videoConstraints,
                 },
