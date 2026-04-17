@@ -78,6 +78,9 @@ export const snackApi = {
     close: (id: number) =>
         authHttp<SnackEvent>(`${BASE}/events/${id}/close`, { method: "POST" }),
 
+    delete: (id: number) =>
+        authHttp<void>(`${BASE}/events/${id}`, { method: "DELETE" }),
+
     /**
      * Excel 다운로드 — JSON이 아닌 binary blob이라 authHttp 우회.
      * credentials include + 직접 fetch.

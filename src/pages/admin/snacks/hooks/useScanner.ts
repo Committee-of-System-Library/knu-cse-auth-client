@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react'
+import { useEffect, useRef, useState, useCallback } from 'react'
 import { Html5Qrcode } from 'html5-qrcode'
 
 const ELEMENT_ID = 'snack-qr-region'
@@ -12,9 +12,16 @@ type Options = {
     enabled: boolean
 }
 
+type CapsWithTorch = MediaTrackCapabilities & { torch?: boolean }
+type ConstraintsWithTorch = MediaTrackConstraints & {
+    advanced?: Array<MediaTrackConstraintSet & { torch?: boolean }>
+}
+
 export function useScanner({ onStudentNumber, enabled }: Options) {
     const [state, setState] = useState<ScannerState>('idle')
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
+    const [hasTorch, setHasTorch] = useState(false)
+    const [torchOn, setTorchOn] = useState(false)
     const scannerRef = useRef<Html5Qrcode | null>(null)
     const lastScanRef = useRef<{ value: string; at: number }>({ value: '', at: 0 })
     const onStudentNumberRef = useRef(onStudentNumber)
@@ -31,13 +38,24 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
         scannerRef.current = scanner
         setState('starting')
 
+        // Higher resolution + continuous focus dramatically improves QR detection
+        // in low light and at angles. qrbox is omitted intentionally so the
+        // scanner reads the entire video frame — the on-screen brackets are
+        // just a visual hint, not a hard constraint.
+        const videoConstraints: MediaTrackConstraints = {
+            facingMode: { ideal: 'environment' },
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+        }
+
         scanner
             .start(
                 { facingMode: 'environment' },
                 {
-                    fps: 10,
-                    qrbox: { width: 240, height: 240 },
+                    fps: 15,
                     aspectRatio: window.innerHeight / window.innerWidth,
+                    disableFlip: false,
+                    videoConstraints,
                 },
                 (decodedText) => {
                     const studentNumber = decodedText.substring(0, STUDENT_NUMBER_LENGTH)
@@ -58,6 +76,14 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
             .then(() => {
                 if (cancelled) return
                 setState('running')
+
+                // Detect torch capability after the stream is live
+                try {
+                    const caps = scanner.getRunningTrackCapabilities() as CapsWithTorch
+                    if (caps && caps.torch) setHasTorch(true)
+                } catch {
+                    // ignore
+                }
             })
             .catch((err: unknown) => {
                 if (cancelled) return
@@ -67,7 +93,7 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
                     message.toLowerCase().includes('notallowed')
                 ) {
                     setState('denied')
-                    setErrorMessage('카메라 권한이 거부되었습니다. 브라우저 설정에서 권한을 허용해 주세요.')
+                    setErrorMessage('카메라 권한이 거부되었습니다. 브라우저 설정에서 허용해 주세요.')
                 } else {
                     setState('error')
                     setErrorMessage(message)
@@ -82,39 +108,26 @@ export function useScanner({ onStudentNumber, enabled }: Options) {
                 s.stop()
                     .then(() => s.clear())
                     .catch(() => {
-                        // ignore — may already be stopped
+                        // already stopped
                     })
             }
         }
     }, [enabled])
 
-    return { state, errorMessage, elementId: ELEMENT_ID }
-}
+    const toggleTorch = useCallback(async () => {
+        const s = scannerRef.current
+        if (!s || !hasTorch) return
+        const next = !torchOn
+        try {
+            await s.applyVideoConstraints({
+                advanced: [{ torch: next }],
+            } as ConstraintsWithTorch)
+            setTorchOn(next)
+        } catch {
+            // device may not actually support runtime torch toggle
+            setHasTorch(false)
+        }
+    }, [hasTorch, torchOn])
 
-const FREQ = {
-    OK: 880,
-    DUPLICATE: 440,
-    UNPAID: 220,
-    NOT_FOUND: 180,
-} as const
-
-export function playFeedback(result: keyof typeof FREQ) {
-    try {
-        const ctx = new (window.AudioContext ||
-            (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)()
-        const osc = ctx.createOscillator()
-        const gain = ctx.createGain()
-        osc.connect(gain)
-        gain.connect(ctx.destination)
-        osc.type = 'sine'
-        osc.frequency.value = FREQ[result]
-        gain.gain.setValueAtTime(0.0001, ctx.currentTime)
-        gain.gain.exponentialRampToValueAtTime(0.18, ctx.currentTime + 0.01)
-        gain.gain.exponentialRampToValueAtTime(0.0001, ctx.currentTime + 0.18)
-        osc.start(ctx.currentTime)
-        osc.stop(ctx.currentTime + 0.2)
-        osc.onended = () => ctx.close()
-    } catch {
-        // audio is best-effort
-    }
+    return { state, errorMessage, elementId: ELEMENT_ID, hasTorch, torchOn, toggleTorch }
 }

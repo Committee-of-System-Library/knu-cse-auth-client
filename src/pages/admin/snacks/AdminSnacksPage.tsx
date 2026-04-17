@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { Plus, ScanLine, Loader2, UtensilsCrossed, ShieldCheck, Users } from 'lucide-react'
 import { snackApi, type SnackEvent } from '@/shared/api/snack.api'
 import StartEventModal from './components/StartEventModal'
+import DeleteEventButton from './components/DeleteEventButton'
 
 export default function AdminSnacksPage() {
     const [events, setEvents] = useState<SnackEvent[]>([])
@@ -68,23 +69,38 @@ export default function AdminSnacksPage() {
             ) : (
                 <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
                     {events.map((event) => (
-                        <button
+                        <div
                             key={event.id}
-                            onClick={() => {
-                                if (event.status === 'OPEN') {
-                                    navigate(`/admin/snacks/${event.id}/scan`)
-                                } else {
-                                    navigate(`/admin/snacks/${event.id}`)
-                                }
-                            }}
-                            className="group flex flex-col gap-3 rounded-2xl border border-surface-200 bg-white p-5 text-left shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover"
+                            className="group relative flex flex-col gap-3 rounded-2xl border border-surface-200 bg-white p-5 text-left shadow-card transition-all hover:-translate-y-0.5 hover:shadow-card-hover"
                         >
-                            <div className="flex items-start justify-between gap-3">
+                            <button
+                                type="button"
+                                onClick={() => {
+                                    if (event.status === 'OPEN') {
+                                        navigate(`/admin/snacks/${event.id}/scan`)
+                                    } else {
+                                        navigate(`/admin/snacks/${event.id}`)
+                                    }
+                                }}
+                                className="absolute inset-0 z-0 rounded-2xl"
+                                aria-label={`${event.name} 열기`}
+                            />
+                            <div className="pointer-events-none relative z-10 flex items-start justify-between gap-3">
                                 <h2 className="text-base font-bold text-ink">{event.name}</h2>
-                                <StatusChip status={event.status} />
+                                <div className="pointer-events-auto flex items-center gap-1">
+                                    <StatusChip status={event.status} />
+                                    <DeleteEventButton
+                                        event={event}
+                                        onDeleted={() =>
+                                            setEvents((prev) =>
+                                                prev.filter((e) => e.id !== event.id)
+                                            )
+                                        }
+                                    />
+                                </div>
                             </div>
 
-                            <div className="flex flex-wrap items-center gap-2">
+                            <div className="pointer-events-none relative z-10 flex flex-wrap items-center gap-2">
                                 <Chip
                                     icon={<span className="font-mono text-[10px]">{event.semester}</span>}
                                     label={null}
@@ -98,7 +114,7 @@ export default function AdminSnacksPage() {
                                 )}
                             </div>
 
-                            <div className="flex items-end justify-between border-t border-surface-100 pt-3">
+                            <div className="pointer-events-none relative z-10 flex items-end justify-between border-t border-surface-100 pt-3">
                                 <div>
                                     <p className="text-[10px] uppercase tracking-wider text-ink-300">
                                         배부 인원
@@ -128,7 +144,7 @@ export default function AdminSnacksPage() {
                                 </div>
                             </div>
 
-                            <div className="flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
+                            <div className="pointer-events-none relative z-10 flex items-center gap-1 text-xs font-medium text-primary opacity-0 transition-opacity group-hover:opacity-100">
                                 {event.status === 'OPEN' ? (
                                     <>
                                         <ScanLine className="h-3.5 w-3.5" />
@@ -138,7 +154,7 @@ export default function AdminSnacksPage() {
                                     <>상세 보기</>
                                 )}
                             </div>
-                        </button>
+                        </div>
                     ))}
                 </div>
             )}

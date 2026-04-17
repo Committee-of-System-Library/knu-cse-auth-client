@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { ArrowLeft, Download, Loader2, Search, ShieldCheck, ScanLine } from 'lucide-react'
 import { snackApi, type SnackEvent, type SnackHandout } from '@/shared/api/snack.api'
+import DeleteEventButton from './components/DeleteEventButton'
 
 export default function SnackEventDetailPage() {
     const { id } = useParams<{ id: string }>()
@@ -96,7 +97,7 @@ export default function SnackEventDetailPage() {
                         )}
                     </div>
                 </div>
-                <div className="flex shrink-0 items-center gap-2">
+                <div className="flex shrink-0 flex-wrap items-center gap-2">
                     {event.status === 'OPEN' && (
                         <button
                             onClick={() => navigate(`/admin/snacks/${event.id}/scan`)}
@@ -118,6 +119,11 @@ export default function SnackEventDetailPage() {
                         )}
                         Excel 다운로드
                     </button>
+                    <DeleteEventButton
+                        event={{ ...event, handoutCount: handouts.length }}
+                        onDeleted={() => navigate('/admin/snacks', { replace: true })}
+                        variant="button"
+                    />
                 </div>
             </div>
 
