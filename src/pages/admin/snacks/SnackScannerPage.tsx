@@ -1,4 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { useNavigate, useParams } from 'react-router-dom'
 import {
     ArrowLeft,
@@ -281,7 +282,7 @@ export default function SnackScannerPage() {
                 />
             )}
 
-            {showCloseConfirm && (
+            {showCloseConfirm && createPortal(
                 <div
                     className="fixed inset-0 z-[80] flex items-center justify-center bg-black/65 px-4"
                     onClick={() => setShowCloseConfirm(false)}
@@ -315,7 +316,8 @@ export default function SnackScannerPage() {
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body,
             )}
         </div>
     )

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Trash2, Loader2, X, AlertTriangle } from 'lucide-react'
 import { snackApi, type SnackEvent } from '@/shared/api/snack.api'
 
@@ -57,7 +58,7 @@ export default function DeleteEventButton({ event, onDeleted, variant = 'icon' }
         <>
             {trigger}
 
-            {confirming && (
+            {confirming && createPortal(
                 <div
                     className="fixed inset-0 z-[80] flex items-center justify-center bg-black/50 px-4"
                     onClick={() => !deleting && setConfirming(false)}
@@ -129,7 +130,8 @@ export default function DeleteEventButton({ event, onDeleted, variant = 'icon' }
                             </button>
                         </div>
                     </div>
-                </div>
+                </div>,
+                document.body,
             )}
         </>
     )

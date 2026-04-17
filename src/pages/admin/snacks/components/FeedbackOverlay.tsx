@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { Check, X, Info, AlertTriangle } from 'lucide-react'
 import type { HandoutScanResult } from '@/shared/api/snack.api'
 
@@ -57,7 +58,7 @@ export default function FeedbackOverlay({ result, onDismiss, durationMs = 1400 }
         return new Date(iso).toLocaleTimeString('ko-KR', { hour12: false })
     }
 
-    return (
+    return createPortal(
         <div
             className={`pointer-events-none fixed inset-0 z-[70] flex items-center justify-center transition-opacity duration-200 ${
                 visible ? 'opacity-100' : 'opacity-0'
@@ -89,6 +90,7 @@ export default function FeedbackOverlay({ result, onDismiss, durationMs = 1400 }
                     <p className="text-xs opacity-80">받은 시각 {formatTime(result.receivedAt)}</p>
                 )}
             </div>
-        </div>
+        </div>,
+        document.body,
     )
 }

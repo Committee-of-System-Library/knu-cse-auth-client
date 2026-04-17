@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react'
+import { createPortal } from 'react-dom'
 import { X, Loader2 } from 'lucide-react'
 import { snackApi, type SnackEvent } from '@/shared/api/snack.api'
 
@@ -42,7 +43,7 @@ export default function StartEventModal({ onClose, onCreated }: Props) {
         }
     }
 
-    return (
+    return createPortal(
         <div
             className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 px-4"
             onClick={onClose}
@@ -119,6 +120,7 @@ export default function StartEventModal({ onClose, onCreated }: Props) {
                     이벤트 시작
                 </button>
             </div>
-        </div>
+        </div>,
+        document.body,
     )
 }
