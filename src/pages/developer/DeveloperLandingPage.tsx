@@ -93,7 +93,7 @@ repositories {
 }
 
 dependencies {
-    implementation 'kr.ac.knu.cse:knu-cse-sso-spring-boot-starter:1.0.0'
+    implementation 'kr.ac.knu.cse:knu-cse-sso-spring-boot-starter:1.1.0'
 }`}</CodeBlock>
                     </div>
 
