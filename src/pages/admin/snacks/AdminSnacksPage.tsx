@@ -15,7 +15,11 @@ export default function AdminSnacksPage() {
         setLoading(true)
         snackApi.list()
             .then(setEvents)
-            .catch(() => alert('이벤트 목록을 불러올 수 없습니다.'))
+            .catch((err) => {
+                console.error('[admin/snacks] list failed', err)
+                setEvents([])
+                alert(`이벤트 목록을 불러올 수 없습니다.\n${err instanceof Error ? err.message : ''}`)
+            })
             .finally(() => setLoading(false))
     }
 

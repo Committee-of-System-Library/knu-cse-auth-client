@@ -24,7 +24,11 @@ export default function AdminVerificationsPage() {
         setLoading(true)
         authApi.adminVerifications.list(status)
             .then(setItems)
-            .catch(() => alert('인증 요청을 불러올 수 없습니다.'))
+            .catch((err) => {
+                console.error('[admin/verifications] list failed', err)
+                setItems([])
+                alert(`인증 요청을 불러올 수 없습니다.\n${err instanceof Error ? err.message : ''}`)
+            })
             .finally(() => setLoading(false))
     }, [])
 
@@ -37,7 +41,10 @@ export default function AdminVerificationsPage() {
         try {
             await authApi.adminVerifications.approve(item.id, comment || undefined)
             setItems(prev => prev.filter(v => v.id !== item.id))
-        } catch { alert('승인에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/verifications] approve failed', err)
+            alert(`승인에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 
@@ -48,7 +55,10 @@ export default function AdminVerificationsPage() {
         try {
             await authApi.adminVerifications.reject(item.id, comment || undefined)
             setItems(prev => prev.filter(v => v.id !== item.id))
-        } catch { alert('거절에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/verifications] reject failed', err)
+            alert(`거절에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 

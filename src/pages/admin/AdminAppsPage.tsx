@@ -24,8 +24,10 @@ export default function AdminAppsPage() {
         try {
             const list = await authApi.adminApps.list(status)
             setApps(list)
-        } catch {
+        } catch (err) {
+            console.error('[admin/apps] list failed', err)
             setApps([])
+            alert(`클라이언트 목록을 불러올 수 없습니다.\n${err instanceof Error ? err.message : ''}`)
         } finally {
             setIsLoading(false)
         }

@@ -27,7 +27,11 @@ export default function AdminUsersPage() {
         setLoading(true)
         authApi.adminUsers.list()
             .then(setUsers)
-            .catch(() => alert('사용자 목록을 불러올 수 없습니다.'))
+            .catch((err) => {
+                console.error('[admin/users] list failed', err)
+                setUsers([])
+                alert(`사용자 목록을 불러올 수 없습니다.\n${err instanceof Error ? err.message : ''}`)
+            })
             .finally(() => setLoading(false))
     }
 
@@ -47,7 +51,10 @@ export default function AdminUsersPage() {
         try {
             await authApi.adminUsers.changeRole(user.id, role)
             setUsers(prev => prev.map(u => u.id === user.id ? { ...u, role: role as Student['role'] } : u))
-        } catch { alert('역할 변경에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/users] role change failed', err)
+            alert(`역할 변경에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 
@@ -56,7 +63,10 @@ export default function AdminUsersPage() {
         try {
             await authApi.adminUsers.changeUserType(user.id, userType)
             setUsers(prev => prev.map(u => u.id === user.id ? { ...u, userType: userType as Student['userType'] } : u))
-        } catch { alert('유형 변경에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/users] userType change failed', err)
+            alert(`유형 변경에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 
@@ -66,7 +76,10 @@ export default function AdminUsersPage() {
         try {
             await authApi.adminUsers.delete(user.id)
             setUsers(prev => prev.filter(u => u.id !== user.id))
-        } catch { alert('삭제에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/users] delete failed', err)
+            alert(`삭제에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 

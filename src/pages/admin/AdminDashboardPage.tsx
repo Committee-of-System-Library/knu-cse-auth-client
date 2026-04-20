@@ -26,6 +26,15 @@ export default function AdminDashboardPage() {
             authApi.adminRegistry.list(),
             authApi.adminApps.list(),
         ]).then(([users, verifications, registry, apps]) => {
+            const labelled: Array<[string, PromiseSettledResult<unknown>]> = [
+                ['users', users], ['verifications', verifications],
+                ['registry', registry], ['apps', apps],
+            ]
+            labelled.forEach(([key, result]) => {
+                if (result.status === 'rejected') {
+                    console.error(`[admin/dashboard] ${key} load failed`, result.reason)
+                }
+            })
             setStats([
                 { label: '전체 사용자', value: users.status === 'fulfilled' ? String(users.value.length) : '—', icon: Users },
                 { label: '인증 대기', value: verifications.status === 'fulfilled' ? String(verifications.value.length) : '—', icon: ShieldCheck },

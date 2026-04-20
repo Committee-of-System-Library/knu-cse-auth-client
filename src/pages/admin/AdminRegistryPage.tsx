@@ -17,7 +17,11 @@ export default function AdminRegistryPage() {
         setLoading(true)
         authApi.adminRegistry.list()
             .then(setStudents)
-            .catch(() => alert('학생 명단을 불러올 수 없습니다.'))
+            .catch((err) => {
+                console.error('[admin/registry] list failed', err)
+                setStudents([])
+                alert(`학생 명단을 불러올 수 없습니다.\n${err instanceof Error ? err.message : ''}`)
+            })
             .finally(() => setLoading(false))
     }
 
@@ -39,7 +43,10 @@ export default function AdminRegistryPage() {
             const result = await authApi.adminRegistry.upload(file)
             setUploadResult(result)
             load()
-        } catch { alert('CSV 업로드에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/registry] upload failed', err)
+            alert(`CSV 업로드에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         if (fileInputRef.current) fileInputRef.current.value = ''
     }
 
@@ -51,7 +58,10 @@ export default function AdminRegistryPage() {
             setStudents(prev => [...prev, created])
             setShowAddModal(false)
             setAddForm({ studentNumber: '', name: '', major: '컴퓨터학부', grade: 1, enrollmentStatus: '재학' })
-        } catch { alert('학생 추가에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/registry] add failed', err)
+            alert(`학생 추가에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setAddLoading(false)
     }
 
@@ -61,7 +71,10 @@ export default function AdminRegistryPage() {
         try {
             await authApi.adminRegistry.delete(s.studentNumber)
             setStudents(prev => prev.filter(x => x.studentNumber !== s.studentNumber))
-        } catch { alert('삭제에 실패했습니다.') }
+        } catch (err) {
+            console.error('[admin/registry] delete failed', err)
+            alert(`삭제에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+        }
         setActionLoading(null)
     }
 
@@ -151,7 +164,10 @@ export default function AdminRegistryPage() {
                                             try {
                                                 const updated = await authApi.adminRegistry.changeEnrollmentStatus(s.studentNumber, newStatus)
                                                 setStudents(prev => prev.map(x => x.id === updated.id ? updated : x))
-                                            } catch { alert('학적상태 변경에 실패했습니다.') }
+                                            } catch (err) {
+                                                console.error('[admin/registry] enrollment status change failed', err)
+                                                alert(`학적상태 변경에 실패했습니다.\n${err instanceof Error ? err.message : ''}`)
+                                            }
                                         }}
                                         className="px-2 py-1 bg-surface-50 rounded-lg text-sm border-none focus:outline-none focus:ring-2 focus:ring-primary-200"
                                     >

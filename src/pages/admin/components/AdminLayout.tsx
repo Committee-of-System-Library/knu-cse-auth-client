@@ -37,7 +37,8 @@ export default function AdminLayout() {
                 }
                 setAuthState('authenticated')
             })
-            .catch(() => {
+            .catch((err) => {
+                console.error('[admin] auth check failed', err)
                 redirectToLogin()
             })
     }, [navigate])
