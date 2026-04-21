@@ -1,4 +1,5 @@
 @import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css');
+@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -50,5 +51,50 @@
     .scrollbar-thin::-webkit-scrollbar-thumb {
         background: #D1D6DB;
         border-radius: 999px;
+    }
+
+    .font-mono {
+        font-family: 'JetBrains Mono', ui-monospace, 'SF Mono', Menlo, monospace;
+        font-feature-settings: 'zero', 'ss01';
+    }
+
+    .grid-paper {
+        background-image:
+            linear-gradient(to right, rgba(25, 31, 40, 0.04) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(25, 31, 40, 0.04) 1px, transparent 1px);
+        background-size: 32px 32px;
+    }
+
+    .grid-paper-fine {
+        background-image:
+            linear-gradient(to right, rgba(25, 31, 40, 0.035) 1px, transparent 1px),
+            linear-gradient(to bottom, rgba(25, 31, 40, 0.035) 1px, transparent 1px);
+        background-size: 16px 16px;
+    }
+
+    .rule-strong {
+        border-top: 2px solid #191F28;
+    }
+
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+
+    .dot-pulse {
+        animation: pulse-dot 2s ease-in-out infinite;
+    }
+
+    @keyframes shimmer-line {
+        0% { transform: translateX(-100%); }
+        100% { transform: translateX(100%); }
+    }
+
+    .shimmer-line::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(90deg, transparent, rgba(97, 95, 255, 0.15), transparent);
+        animation: shimmer-line 3s ease-in-out infinite;
     }
 }

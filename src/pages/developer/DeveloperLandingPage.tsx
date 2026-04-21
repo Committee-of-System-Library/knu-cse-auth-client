@@ -1,4 +1,4 @@
-import { ArrowRight, Lock } from 'lucide-react'
+import { ArrowRight } from 'lucide-react'
 import { Link, useNavigate, useOutletContext } from 'react-router-dom'
 import type { DeveloperOutletContext } from './components/DeveloperLayout'
 
@@ -6,6 +6,7 @@ export default function DeveloperLandingPage() {
     const navigate = useNavigate()
     const ctx = useOutletContext<DeveloperOutletContext | undefined>()
     const isStaff = ctx?.isStaff ?? false
+    const role = ctx?.role ?? null
 
     const handleStart = () => {
         navigate('/developer/apps')
@@ -13,23 +14,7 @@ export default function DeveloperLandingPage() {
 
     return (
         <div className="animate-fade-up">
-            {isStaff && (
-                <Link
-                    to="/developer/architecture"
-                    className="group mt-6 flex items-center justify-between gap-4 px-5 py-4 bg-white border border-surface-200 rounded-xl hover:border-primary/40 hover:shadow-sm transition-all"
-                >
-                    <div className="flex items-center gap-3">
-                        <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
-                            <Lock className="w-4 h-4" />
-                        </div>
-                        <div>
-                            <p className="text-sm font-semibold text-ink">내부 아키텍처 문서</p>
-                            <p className="text-ink-300 text-xs mt-0.5">임원 권한 확인됨 — 플랫폼 구조 전반 열람 가능</p>
-                        </div>
-                    </div>
-                    <ArrowRight className="w-4 h-4 text-ink-300 group-hover:text-primary transition-colors" />
-                </Link>
-            )}
+            {isStaff && <StaffNotice role={role} />}
 
             {/* Hero */}
             <section className="py-12 lg:py-20">
@@ -460,6 +445,65 @@ function ApiEndpoint({
                 <code className="text-[13px] font-mono text-ink">{path}</code>
             </div>
             <p className="text-ink-300 text-xs">{desc}</p>
+        </div>
+    )
+}
+
+function StaffNotice({ role }: { role: string | null }) {
+    return (
+        <Link
+            to="/developer/architecture"
+            className="group relative block mt-6 bg-ink text-white overflow-hidden"
+        >
+            <div className="absolute inset-y-0 left-0 w-[3px] bg-primary-400" />
+            <div className="absolute top-0 right-0 h-[2px] w-24 bg-primary-400" />
+
+            <div className="pl-6 pr-5 py-5 sm:py-6 grid sm:grid-cols-[1fr_auto] gap-5 items-end">
+                <div>
+                    <div className="flex items-center gap-2 font-mono text-[10px] tracking-[0.2em] text-primary-300 mb-3">
+                        <span>§ INTERNAL / RESTRICTED</span>
+                        <span className="inline-block w-1 h-1 rounded-full bg-primary-400 dot-pulse" />
+                    </div>
+                    <h3 className="text-[22px] sm:text-[26px] font-bold tracking-tight leading-tight mb-2">
+                        플랫폼 아키텍처 문서
+                    </h3>
+                    <p className="text-[13px] text-white/60 leading-relaxed max-w-md">
+                        8개 서브 레포의 구성·배포·운영 구조를 한 화면에. 토폴로지, 서비스 매트릭스, Nginx 라우팅.
+                    </p>
+                </div>
+
+                <div className="flex items-center gap-5 pr-1">
+                    <dl className="hidden sm:grid grid-cols-3 gap-5 font-mono text-[10px] tracking-wider">
+                        <Meta label="CLEARANCE" value={role ?? '—'} />
+                        <Meta label="SECTIONS" value="07" />
+                        <Meta label="REV" value="04·21" />
+                    </dl>
+                    <div className="flex items-center gap-2 text-sm font-medium group-hover:translate-x-0.5 transition-transform">
+                        <span>ENTER</span>
+                        <ArrowRight className="w-4 h-4" />
+                    </div>
+                </div>
+            </div>
+
+            <div className="h-px bg-white/10" />
+            <div className="pl-6 pr-5 py-2 flex items-center gap-3 font-mono text-[10px] text-white/40 tracking-wider">
+                <span>auth · ledger · locker</span>
+                <span className="text-white/20">/</span>
+                <span>server · client</span>
+                <span className="text-white/20">/</span>
+                <span>core-infra</span>
+                <span className="text-white/20">/</span>
+                <span>sso-starter</span>
+            </div>
+        </Link>
+    )
+}
+
+function Meta({ label, value }: { label: string; value: string }) {
+    return (
+        <div>
+            <dt className="text-white/30 mb-1">{label}</dt>
+            <dd className="text-white font-medium uppercase">{value}</dd>
         </div>
     )
 }
