@@ -39,7 +39,7 @@ export type SnackEventCreateRequest = {
     requiresPayment: boolean
 }
 
-const BASE = "/appfn/api/admin/snacks"
+const BASE = "/admin/snacks"
 
 function getAuthBaseUrl(): string {
     const url = (import.meta.env.VITE_AUTH_SERVER_BASE_URL as string)?.trim()

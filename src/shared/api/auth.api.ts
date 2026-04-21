@@ -103,86 +103,86 @@ export const authApi = {
         }),
 
     developerApps: {
-        list: () => authHttp<ClientApplication[]>("/appfn/api/developer/apps"),
+        list: () => authHttp<ClientApplication[]>("/developer/apps"),
         create: (body: AppRegisterRequest) =>
-            authHttp<ClientApplication>("/appfn/api/developer/apps", {
+            authHttp<ClientApplication>("/developer/apps", {
                 method: "POST",
                 body: JSON.stringify(body),
             }),
         delete: (id: number) =>
-            authHttp<void>(`/appfn/api/developer/apps/${id}`, { method: "DELETE" }),
+            authHttp<void>(`/developer/apps/${id}`, { method: "DELETE" }),
     },
 
     adminApps: {
         list: (status?: string) =>
             authHttp<ClientApplication[]>(
-                `/appfn/api/admin/apps${status ? `?status=${status}` : ''}`
+                `/admin/apps${status ? `?status=${status}` : ''}`
             ),
         approve: (id: number) =>
-            authHttp<AppApproveResponse>(`/appfn/api/admin/apps/${id}/approve`, { method: "PUT" }),
+            authHttp<AppApproveResponse>(`/admin/apps/${id}/approve`, { method: "PUT" }),
         reject: (id: number, reason?: string) =>
-            authHttp<ClientApplication>(`/appfn/api/admin/apps/${id}/reject`, {
+            authHttp<ClientApplication>(`/admin/apps/${id}/reject`, {
                 method: "PUT",
                 body: JSON.stringify(reason ? { reason } : {}),
             }),
         suspend: (id: number) =>
-            authHttp<ClientApplication>(`/appfn/api/admin/apps/${id}/suspend`, { method: "PUT" }),
+            authHttp<ClientApplication>(`/admin/apps/${id}/suspend`, { method: "PUT" }),
     },
 
     adminUsers: {
-        list: () => authHttp<Student[]>("/appfn/api/admin/users"),
+        list: () => authHttp<Student[]>("/admin/users"),
         changeRole: (id: number, role: string) =>
-            authHttp<void>(`/appfn/api/admin/users/${id}/role`, {
+            authHttp<void>(`/admin/users/${id}/role`, {
                 method: "PUT",
                 body: JSON.stringify({ role }),
             }),
         changeUserType: (id: number, userType: string) =>
-            authHttp<void>(`/appfn/api/admin/users/${id}/user-type`, {
+            authHttp<void>(`/admin/users/${id}/user-type`, {
                 method: "PUT",
                 body: JSON.stringify({ userType }),
             }),
         delete: (id: number) =>
-            authHttp<void>(`/appfn/api/admin/users/${id}`, { method: "DELETE" }),
+            authHttp<void>(`/admin/users/${id}`, { method: "DELETE" }),
     },
 
     adminVerifications: {
         list: (status?: string) =>
             authHttp<VerificationRequest[]>(
-                `/appfn/api/admin/verifications${status ? `?status=${status}` : ''}`
+                `/admin/verifications${status ? `?status=${status}` : ''}`
             ),
         approve: (id: number, comment?: string) =>
-            authHttp<void>(`/appfn/api/admin/verifications/${id}/approve`, {
+            authHttp<void>(`/admin/verifications/${id}/approve`, {
                 method: "PUT",
                 body: JSON.stringify(comment ? { comment } : {}),
             }),
         reject: (id: number, comment?: string) =>
-            authHttp<void>(`/appfn/api/admin/verifications/${id}/reject`, {
+            authHttp<void>(`/admin/verifications/${id}/reject`, {
                 method: "PUT",
                 body: JSON.stringify(comment ? { comment } : {}),
             }),
     },
 
     adminRegistry: {
-        list: () => authHttp<CseStudentRegistry[]>("/appfn/api/admin/registry"),
+        list: () => authHttp<CseStudentRegistry[]>("/admin/registry"),
         upload: (file: File) => {
             const form = new FormData()
             form.append("file", file)
-            return authHttp<RegistryUploadResult>("/appfn/api/admin/registry/upload", {
+            return authHttp<RegistryUploadResult>("/admin/registry/upload", {
                 method: "POST",
                 body: form,
             })
         },
         add: (body: { studentNumber: string; name: string; major: string; grade: number; enrollmentStatus?: string }) =>
-            authHttp<CseStudentRegistry>("/appfn/api/admin/registry", {
+            authHttp<CseStudentRegistry>("/admin/registry", {
                 method: "POST",
                 body: JSON.stringify(body),
             }),
         changeEnrollmentStatus: (studentNumber: string, enrollmentStatus: string) =>
-            authHttp<CseStudentRegistry>(`/appfn/api/admin/registry/${studentNumber}/enrollment-status`, {
+            authHttp<CseStudentRegistry>(`/admin/registry/${studentNumber}/enrollment-status`, {
                 method: "PUT",
                 body: JSON.stringify({ enrollmentStatus }),
             }),
         delete: (studentNumber: string) =>
-            authHttp<void>(`/appfn/api/admin/registry/${studentNumber}`, { method: "DELETE" }),
+            authHttp<void>(`/admin/registry/${studentNumber}`, { method: "DELETE" }),
     },
 }
