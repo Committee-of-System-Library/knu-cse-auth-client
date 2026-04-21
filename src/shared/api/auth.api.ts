@@ -40,6 +40,27 @@ export type ClientApplication = {
     updatedAt: string
 }
 
+/** 내부 아키텍처 문서 (staff 전용) */
+export type ArchitectureBlock = {
+    type: 'bullets' | 'table'
+    heading: string
+    bullets?: string[] | null
+    rows?: { cells: string[] }[] | null
+    headers?: string[] | null
+}
+
+export type ArchitectureSection = {
+    id: string
+    title: string
+    summary: string
+    blocks: ArchitectureBlock[]
+}
+
+export type ArchitectureDoc = {
+    updatedAt: string
+    sections: ArchitectureSection[]
+}
+
 /** 사용자 (admin) */
 export type Student = {
     id: number; name: string; studentNumber: string;
@@ -160,6 +181,10 @@ export const authApi = {
                 method: "PUT",
                 body: JSON.stringify(comment ? { comment } : {}),
             }),
+    },
+
+    developerDocs: {
+        architecture: () => authHttp<ArchitectureDoc>("/developer/docs/architecture"),
     },
 
     adminRegistry: {

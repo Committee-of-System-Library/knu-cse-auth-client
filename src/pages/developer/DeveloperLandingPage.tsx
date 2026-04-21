@@ -1,8 +1,11 @@
-import { ArrowRight } from 'lucide-react'
-import { useNavigate } from 'react-router-dom'
+import { ArrowRight, Lock } from 'lucide-react'
+import { Link, useNavigate, useOutletContext } from 'react-router-dom'
+import type { DeveloperOutletContext } from './components/DeveloperLayout'
 
 export default function DeveloperLandingPage() {
     const navigate = useNavigate()
+    const ctx = useOutletContext<DeveloperOutletContext | undefined>()
+    const isStaff = ctx?.isStaff ?? false
 
     const handleStart = () => {
         navigate('/developer/apps')
@@ -10,6 +13,24 @@ export default function DeveloperLandingPage() {
 
     return (
         <div className="animate-fade-up">
+            {isStaff && (
+                <Link
+                    to="/developer/architecture"
+                    className="group mt-6 flex items-center justify-between gap-4 px-5 py-4 bg-white border border-surface-200 rounded-xl hover:border-primary/40 hover:shadow-sm transition-all"
+                >
+                    <div className="flex items-center gap-3">
+                        <div className="w-9 h-9 rounded-lg bg-primary/10 text-primary flex items-center justify-center flex-shrink-0">
+                            <Lock className="w-4 h-4" />
+                        </div>
+                        <div>
+                            <p className="text-sm font-semibold text-ink">내부 아키텍처 문서</p>
+                            <p className="text-ink-300 text-xs mt-0.5">임원 권한 확인됨 — 플랫폼 구조 전반 열람 가능</p>
+                        </div>
+                    </div>
+                    <ArrowRight className="w-4 h-4 text-ink-300 group-hover:text-primary transition-colors" />
+                </Link>
+            )}
+
             {/* Hero */}
             <section className="py-12 lg:py-20">
                 <p className="text-primary text-xs font-semibold tracking-[0.15em] uppercase mb-3">KNU CSE SSO</p>

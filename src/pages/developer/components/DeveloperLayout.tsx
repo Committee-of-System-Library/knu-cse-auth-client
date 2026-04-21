@@ -1,37 +1,44 @@
 import { useEffect, useState } from 'react'
 import { NavLink, Outlet, useNavigate } from 'react-router-dom'
-import { LogIn, LogOut } from 'lucide-react'
+import { LogIn, LogOut, Lock } from 'lucide-react'
 import { authApi } from '@/shared/api/auth.api'
 import { buildSSOLoginUrl } from '@/shared/utils/oauth'
+
+const STAFF_ROLES = new Set(['ADMIN', 'EXECUTIVE', 'FINANCE', 'PLANNING', 'PR', 'CULTURE'])
 
 export default function DeveloperLayout() {
     const navigate = useNavigate()
     const [isLoggedIn, setIsLoggedIn] = useState(false)
+    const [role, setRole] = useState<string | null>(null)
 
     useEffect(() => {
         authApi.me()
-            .then((res) => setIsLoggedIn(res.authenticated))
-            .catch(() => setIsLoggedIn(false))
+            .then((res) => {
+                setIsLoggedIn(res.authenticated)
+                setRole(res.role ?? null)
+            })
+            .catch(() => {
+                setIsLoggedIn(false)
+                setRole(null)
+            })
     }, [])
 
+    const isStaff = role !== null && STAFF_ROLES.has(role)
+
     const handleLogout = async () => {
-        try {
-            await authApi.logout()
-        } catch {
-            // ignore
-        }
+        try { await authApi.logout() } catch { /* ignore */ }
         setIsLoggedIn(false)
+        setRole(null)
         navigate('/developer')
     }
 
     const handleLogin = () => {
-        const url = buildSSOLoginUrl({ returnPath: '/developer/apps' })
+        const url = buildSSOLoginUrl({ returnPath: '/developer' })
         navigate(url)
     }
 
     return (
         <div className="min-h-screen bg-surface-50">
-            {/* 헤더 */}
             <header className="bg-white border-b border-surface-200 sticky top-0 z-10">
                 <div className="max-w-5xl mx-auto px-6 py-3.5 flex items-center justify-between">
                     <NavLink to="/developer" className="flex items-center gap-2.5">
@@ -58,6 +65,19 @@ export default function DeveloperLayout() {
                         >
                             내 앱
                         </NavLink>
+                        {isStaff && (
+                            <NavLink
+                                to="/developer/architecture"
+                                className={({ isActive }) =>
+                                    `flex items-center gap-1.5 font-medium transition-colors ${
+                                        isActive ? 'text-primary' : 'text-ink-300 hover:text-primary'
+                                    }`
+                                }
+                            >
+                                <Lock className="w-3 h-3" />
+                                내부 아키텍처
+                            </NavLink>
+                        )}
                         {isLoggedIn ? (
                             <button
                                 onClick={handleLogout}
@@ -79,10 +99,15 @@ export default function DeveloperLayout() {
                 </div>
             </header>
 
-            {/* 콘텐츠 */}
             <main className="max-w-5xl mx-auto px-6 py-8">
-                <Outlet />
+                <Outlet context={{ isLoggedIn, role, isStaff }} />
             </main>
         </div>
     )
+}
+
+export type DeveloperOutletContext = {
+    isLoggedIn: boolean
+    role: string | null
+    isStaff: boolean
 }

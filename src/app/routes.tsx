@@ -17,6 +17,7 @@ import DeveloperLayout from '@/pages/developer/components/DeveloperLayout'
 import DeveloperLandingPage from '@/pages/developer/DeveloperLandingPage'
 import DeveloperAppsPage from '@/pages/developer/DeveloperAppsPage'
 import DeveloperAppNewPage from '@/pages/developer/DeveloperAppNewPage'
+import DeveloperArchitecturePage from '@/pages/developer/DeveloperArchitecturePage'
 
 const basename = (import.meta.env.VITE_BASE_PATH as string)?.trim()
   ? `/${(import.meta.env.VITE_BASE_PATH as string).trim().replace(/^\/|\/$/g, '')}`
@@ -51,6 +52,7 @@ export const router = createBrowserRouter(
         { index: true, element: <DeveloperLandingPage /> },
         { path: "apps", element: <DeveloperAppsPage /> },
         { path: "apps/new", element: <DeveloperAppNewPage /> },
+        { path: "architecture", element: <DeveloperArchitecturePage /> },
       ],
     },
   ],
